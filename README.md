@@ -207,7 +207,7 @@ Distinguish between app compilation (`check`) and app completion (`verify`):
 
 ```sh
 bun run --cwd apps/example-crm check            # App typecheck, unit tests, and production build
-bun run browser:install                         # One-time pinned Chromium download
+bun run browser:install                         # Verify installed regular Google Chrome; no browser download
 bun run app:browser:verify --app example-crm   # Shared Playwright browser verification
 bun run app:verify --app example-crm           # Full completion check (contract, markers, policy, tests, browser)
 bun run agent:finish --changed                 # Verify all changed app workspaces

@@ -248,7 +248,7 @@
 
 ## Browser automation on managed macOS
 
-- Project browser checks use `scripts/browser-runtime.ts`: full Chromium in unified headless mode, with no new visible window.
+- Project browser checks use `scripts/browser-runtime.ts`: installed Google Chrome in unified headless mode, with its sandbox enabled and no new visible window. Never restore Chrome for Testing with a browser-install command.
 - Never run routine `headless: false` proof scripts or call `bringToFront()` during unattended work.
 - Verify hardware GPU availability before ML tests; do not substitute software rendering or bypass GPU blocklists. If unavailable, use the connected existing Chrome instance through the browser integration.
 - A stopped or timed-out proof must close only its own browser. Never kill Chrome by name or alter a shared user profile.
