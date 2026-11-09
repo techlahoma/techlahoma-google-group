@@ -239,7 +239,7 @@ export async function inspectSetup(
   for (const tool of [
     'mise',
     'actionlint',
-    'gitleaks',
+    'betterleaks',
     'prek',
     'shellcheck',
     'bash',

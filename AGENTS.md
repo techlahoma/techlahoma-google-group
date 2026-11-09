@@ -144,7 +144,7 @@
 - Run the narrowest useful checks after each logical increment.
 - Before an authorized commit or push, run the project verification command and
   the touched-file `prek` guardrails.
-- Never bypass tests, `prek`, Gitleaks, release-age policy, or repository
+- Never bypass tests, `prek`, Betterleaks, release-age policy, or repository
   guardrails to make a change appear complete.
 - If a tool is unavailable, distinguish that verification gap from a code
   failure and report the exact missing proof.
