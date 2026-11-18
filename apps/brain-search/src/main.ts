@@ -120,6 +120,7 @@ function ctx(): RenderContext {
     settings,
     ownerName: settings.name || firstName(state.index?.owner ?? ''),
     setupMarkdown,
+    indexMissing: state.indexError !== null,
   };
 }
 

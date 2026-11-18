@@ -39,6 +39,8 @@ export interface RenderContext {
   /** Owner's first name from `?name=` or the index (BRAIN_OWNER). */
   ownerName: string;
   setupMarkdown: string;
+  /** True only after loading finished and no index was found. */
+  indexMissing?: boolean;
 }
 
 /** The logo text: a saved rename wins, else a pun on the owner's name. */
@@ -506,7 +508,7 @@ export function notFoundHtml(path: string): string {
 export function staticViewHtml(ctx: RenderContext, route: Route): string {
   switch (route.name) {
     case 'home':
-      return homeHtml(ctx, !ctx.index);
+      return homeHtml(ctx, ctx.indexMissing === true);
     case 'search':
       return searchPromptHtml(ctx);
     case 'folder':
