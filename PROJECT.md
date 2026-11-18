@@ -1,6 +1,6 @@
 # Project Contract
 
-- `Tease:` One operational source of truth for Techlahoma Google Apps Starter.
+- `Tease:` One operational source of truth for Techlahoma Google Group.
 - `Lede:` The project is an active, public Techlahoma Bun monorepo with generated app workspaces,
   public-Google-aligned engineering conventions, and a shared Firebase project with per-app Hosting
   sites lifecycle. Credentials and environment bindings stay local; verified public demo URLs live in the app documentation.
@@ -118,6 +118,7 @@ See
 | Monorepo verification evidence | `docs/verification/app-workspace-monorepo-2026-08-04.md` |
 | Public Intro to GDG event materials | `docs/events/README.md` |
 | Model Workshop and public Notion kit | `apps/building-ai-models-without-coding/README.md` |
+| Brain Search workshop app (Nov 19) | `apps/brain-search/README.md`; AI-surface research in `docs/research/brain-search-ai-surfaces-2026-11-18.md` |
 | Model Workshop proof and remaining import/CI limits | `docs/verification/model-workshop-2026-09-15.md` |
 | WordPress Agent Workshop source and handoff | `apps/wordpress-playground/README.md` and `PROMPT.md` |
 | WordPress workshop spec, progress, and proof | `docs/wordpress-workshop/SPEC.md`, `docs/plans/wordpress-playground-workshop-2026-10-24.md`, and `docs/verification/wordpress-playground-workshop-2026-10-24.md` |
@@ -179,7 +180,7 @@ There is no deploy-on-push workflow in the starter.
 The WordPress workshop branch prepares AI Studio/Cloud Run and Firebase Hosting paths. No project/account, deployed URL, or billing change is inferred from that source publication. Before an actual Cloud Run deployment, resolve the project, region, public audience, billing authority, zero-minimum-instance setting, revision, and rollback path. Firebase uses the existing app-scoped deployment commands above.
 
 The source host is the public GitHub template repository
-`techlahoma/techlahoma-google-apps-starter`. Repository publication is separate from Firebase Hosting or Google
+`techlahoma/techlahoma-google-group`. Repository publication is separate from Firebase Hosting or Google
 Cloud deployment.
 
 ## Sensitive-data boundary

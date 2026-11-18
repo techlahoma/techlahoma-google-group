@@ -1,0 +1,209 @@
+---
+title: "The University of Tulsa"
+tags: [ecosystem, talent, school]
+source:
+  - https://ecosystem.samcarlton.com/university-of-tulsa
+  - https://utulsa.edu
+  - https://www.tulsainnovationlabs.com/partner-directory
+  - https://sites.utulsa.edu/cie
+  - https://tulsahighered.com/student-and-transfer-resources/tech-hubs-talent-training-program/
+  - https://sites.utulsa.edu/cie/accelerather/
+  - https://tulsacf.org/wp-content/uploads/2025/11/2024-Tulsa-Community-Foundation-2024-Public-Disclosure-Copy-TUL005.pdf
+  - https://www.linkedin.com/posts/sc4e_we-recently-had-the-incredible-opportunity-activity-7257042760124309504-fhNN
+  - https://apps.irs.gov/pub/epostcard/990/xml/2025/2025_TEOS_XML_11B.zip
+  - https://tulsastem.org/science-fair-winners01262024/
+  - https://apps.irs.gov/pub/epostcard/990/xml/2026/2026_TEOS_XML_05A.zip
+  - https://utulsa.edu/academics/engineering-computer-science/impact/stem-initiatives/
+  - https://www.linkedin.com/posts/tulsa-stem_tulsastem-activity-7158828856269778947-7_ps
+  - https://www.joingradient.com/2025-impact-report
+  - https://utulsa.edu/news/the-university-of-tulsa-acquires-fab-lab-tulsa/
+  - https://utulsa.edu/news/hurricane-ventures-announces-investments-in-cubenexus-lyceum-ai/
+  - https://news.okstate.edu/articles/communications/2024/osu_part_of_consortium_to_secure_tulsa_as_global_tech_leader
+  - https://utulsa.edu/research/ocii/cyber-fellows/
+  - https://www.eda.gov/news/press-release/2024/07/02/Tulsa-Hub-for-Equitable-Trustworthy-Autonomy
+  - https://www.ou.edu/price/news/2023/oklahoma-universities-tulsa-innovation-labs-partner-canopy-healthtech
+  - https://utulsa.edu/wp-content/uploads/2026/03/TCC-A.S.-Engineering-to-UTulsa-B.S.-Computer-Engineering-2025-2026.pdf
+  - https://www.tulsainnovationlabs.com/post/til-tcc-cyber-skills
+  - https://utulsa.edu/news/utulsa-students-win-over-100000-in-2026-entrepreneurs-cup/
+  - https://i2e.org/entrepreneurs-cup-awards-260000-to-oklahomas-top-student-entrepreneurs/
+  - https://i2e.org/tech-transfer-at-tu/
+  - https://aiml-utulsa.github.io/Club-Webpage/hurricane-hackathon/
+  - https://utulsa.edu/news/pilot-innovation-challenge-inspires-next-generation-of-oklahoma-entrepreneurs/
+  - https://utulsa.edu/admissions/apply/transfer-applicants/transfer-credit-and-credit-by-exam/high-school-transfer-equivalencies/
+  - https://tulsaschools.community.diligentoneplatform.com/document/43cb3541-54d9-4ec3-b4d0-1ef73a68e234/?modified=2024-11-01T00%3A35%3A29.603
+  - https://utulsa.edu/admissions/apply/other-students/
+  - https://utulsa.edu/academics/engineering-computer-science/impact/stem-initiatives/utulsa-stem-bootcamp/
+  - https://sites.utulsa.edu/cie/program-initiatives/
+  - https://utulsa.edu/academics/business/
+  - https://sites.utulsa.edu/cie/jolt/
+  - https://sites.utulsa.edu/cie/hurricane-pitch-competition/
+  - https://calendar.utulsa.edu/event/hurricane-pitch-competition-applications-open/
+  - https://givingday.utulsa.edu/pages/cie-center-for-innovation-and-entrepreneurship
+  - https://utulsa.edu/student-life/canecareers/
+  - https://utulsa.edu/student-life/canecareers/employers/career-fairs/
+  - https://utulsa.edu/student-life/canecareers/employers/
+  - https://utulsa.edu/academics/business/opportunities/collins-career-accelerator-program/
+  - https://utulsa.edu/news/student-managed-investment-fund-surpasses-9-million/
+  - https://utulsa.edu/academics/engineering-computer-science/
+  - https://utulsa.edu/academics/engineering-computer-science/academics/departments/computer-science/
+  - https://utulsa.edu/academics/engineering-computer-science/academics/departments/school-cyber-studies/cyber-efforts/
+  - https://utulsa.edu/academics/engineering-computer-science/opportunities/centers-institutes/cyber-corps/
+  - https://utulsa.edu/news/utulsas-oklahoma-cyber-innovation-institute-launches-states-first-cyber-range/
+  - https://utulsa.edu/research/ocii/
+  - https://utulsa.edu/news/oklahoma-cyber-innovation-institute-welcomes-public-into-its-new-home-in-downtown-tulsa/
+  - https://utulsa.edu/news/oklahoma-cyber-innovation-institute-travels-state-to-connect-with-kids/
+  - https://calendar.utulsa.edu/tag/cyber-security/
+  - https://utulsa.edu/research/robotics-institute/
+  - https://utulsa.edu/academics/engineering-computer-science/opportunities/centers-institutes/
+  - https://utulsa.edu/research/office-of-technology-commercialization/
+  - https://utulsa.edu/research/office-of-technology-commercialization/industry-partners/
+  - https://utulsa.edu/academics/engineering-computer-science/opportunities/ecs-research/
+  - https://utulsa.edu/research/research-opportunities/consortia-joint-industry-projects/
+  - https://www.tuffp.org/
+  - https://utulsa.edu/news/tulsa-university-fluid-flow-projects-turns-50/
+  - https://utulsa.edu/news/gencyber-tulsa-2023-nsa/
+  - https://www.eda.gov/sites/default/files/2023-11/Tulsa_Hub_for_Equitable_Trustworthy_Autonomy.pdf
+  - https://www.eda.gov/funding/programs/regional-technology-and-innovation-hubs/2023/Tulsa-Tech-Hub
+  - https://utulsa.edu/news/how-tally-receipts-turned-a-utulsa-pitch-win-into-a-growing-startup/
+  - https://utulsa.edu/news/tu-students-skincheck-app-named-sxsw-finalist/
+  - https://utulsa.edu/news/tus-hurricane-ventures-announces-first-two-startup-investments/
+  - https://utulsa.edu/news/hurricane-ventures-announces-investment-in-tobe-energy/
+  - https://utulsa.edu/news/hurricane-ventures-announces-investments-in-bpendo-titan-intake/
+  - https://www.prnewswire.com/news-releases/utulsas-hurricane-ventures-announces-investments-in-percipio-health-prelude-302395012.html
+  - https://cintrifuse.com/lyceum-ai-acquired-by-perceptyx-marking-first-venture-velocity-exit-for-cintrifuse-program/
+  - https://utulsa.edu/news/utulsas-hurricane-ventures-announces-investment-in-bioreact/
+  - https://www.tulsainnovationlabs.com/tech-hubs-talent-training-program
+  - https://tulsahighered.com/about/advisory-board/
+  - https://www.linkedin.com/posts/swaymedical_casey-dropped-in-to-the-university-of-tulsa-activity-7140386095589974018-OeOv
+  - https://sites.utulsa.edu/csg/events/
+  - https://utulsa.edu/news/utulsa-performing-critical-reviews-of-products-seeking-green-uas-certification/
+  - https://www.tulsainnovationlabs.com/impact-report-2025
+  - https://www.eda.gov/sites/default/files/2024-07/THETA_Tech_Hub_Overarching_Narrative.pdf
+  - https://luma.com/65vz20c7
+  - https://real-estate.utulsa.edu/previous-events/
+  - https://projects.propublica.org/nonprofits/full_text/202641359349312129/IRS990ScheduleR
+  - https://www.hurricanevc.com
+  - https://www.prnewswire.com/news-releases/technology-developed-at-the-university-of-tulsa-and-licensed-by-fortysix-venture-capital-could-advance-cancer-testing-and-targeted-therapeutics-301718170.html
+  - https://sites.utulsa.edu/cie/about-us/
+  - https://projects.propublica.org/nonprofits/full_text/202523219349308302/IRS990ScheduleI
+  - https://apps.irs.gov/pub/epostcard/990/xml/2025/2025_TEOS_XML_11A.zip
+  - https://www.williams.com/2020/04/16/engineering-a-world-of-change/
+  - https://utulsa.edu/news/hurricane-ventures-announces-investments-in-percipio-health-prelude/
+  - https://www.prnewswire.com/news-releases/utulsas-hurricane-ventures-announces-investment-in-tobe-energy-302649084.html
+  - https://utulsa.edu/academics/business/opportunities/student-investment-fund/
+  - https://utulsa.edu/academics/engineering-computer-science/opportunities/ecs-research/cyber/cybersecurity-centers-and-institutes/
+  - https://rfps.its.ms.gov/Procurement/rfps/4313/4313ss.pdf
+  - https://utulsa.edu/wp-content/uploads/2019/07/07-03-19-Cybersecurity-Booklet.pdf
+  - https://www.synercontechnologies.com/wp-content/uploads/2016/01/SSS-ADEM3-WebContent.pdf
+  - https://apps.irs.gov/pub/epostcard/990/xml/2025/2025_TEOS_XML_11C.zip
+updated: 2026-11-18
+---
+
+# The University of Tulsa
+
+A private research university in Tulsa. Its Tulsa Tech Hub work includes cybersecurity assessments, an AI minor and support for autonomous systems research through the Oklahoma Cyber Innovation Institute. It acquired Fab Lab Tulsa in 2024 and partnered with Vanguard Academy of Broken Arrow on a 2026 high school entrepreneurship pilot.
+
+Also called: University of Tulsa, UTulsa, TU, Tulsa University.
+
+**Example:** A founder researching university expertise in cybersecurity and autonomous systems explores the University of Tulsa and its research institutes.
+
+**Connected on the map to:** Startup ecosystem, ARC-H / GreenUAS, SAFE-T, Autonomous Systems Workforce Program, Oklahoma Cyber Innovation Institute, University of Tulsa Center for Innovation & Entrepreneurship, Tulsa Higher Education Consortium, Cherokee AcceleratHER Fellowship.
+
+## Sources
+
+- https://ecosystem.samcarlton.com/university-of-tulsa
+- https://utulsa.edu
+- https://www.tulsainnovationlabs.com/partner-directory
+- https://sites.utulsa.edu/cie
+- https://tulsahighered.com/student-and-transfer-resources/tech-hubs-talent-training-program/
+- https://sites.utulsa.edu/cie/accelerather/
+- https://tulsacf.org/wp-content/uploads/2025/11/2024-Tulsa-Community-Foundation-2024-Public-Disclosure-Copy-TUL005.pdf
+- https://www.linkedin.com/posts/sc4e_we-recently-had-the-incredible-opportunity-activity-7257042760124309504-fhNN
+- https://apps.irs.gov/pub/epostcard/990/xml/2025/2025_TEOS_XML_11B.zip
+- https://tulsastem.org/science-fair-winners01262024/
+- https://apps.irs.gov/pub/epostcard/990/xml/2026/2026_TEOS_XML_05A.zip
+- https://utulsa.edu/academics/engineering-computer-science/impact/stem-initiatives/
+- https://www.linkedin.com/posts/tulsa-stem_tulsastem-activity-7158828856269778947-7_ps
+- https://www.joingradient.com/2025-impact-report
+- https://utulsa.edu/news/the-university-of-tulsa-acquires-fab-lab-tulsa/
+- https://utulsa.edu/news/hurricane-ventures-announces-investments-in-cubenexus-lyceum-ai/
+- https://news.okstate.edu/articles/communications/2024/osu_part_of_consortium_to_secure_tulsa_as_global_tech_leader
+- https://utulsa.edu/research/ocii/cyber-fellows/
+- https://www.eda.gov/news/press-release/2024/07/02/Tulsa-Hub-for-Equitable-Trustworthy-Autonomy
+- https://www.ou.edu/price/news/2023/oklahoma-universities-tulsa-innovation-labs-partner-canopy-healthtech
+- https://utulsa.edu/wp-content/uploads/2026/03/TCC-A.S.-Engineering-to-UTulsa-B.S.-Computer-Engineering-2025-2026.pdf
+- https://www.tulsainnovationlabs.com/post/til-tcc-cyber-skills
+- https://utulsa.edu/news/utulsa-students-win-over-100000-in-2026-entrepreneurs-cup/
+- https://i2e.org/entrepreneurs-cup-awards-260000-to-oklahomas-top-student-entrepreneurs/
+- https://i2e.org/tech-transfer-at-tu/
+- https://aiml-utulsa.github.io/Club-Webpage/hurricane-hackathon/
+- https://utulsa.edu/news/pilot-innovation-challenge-inspires-next-generation-of-oklahoma-entrepreneurs/
+- https://utulsa.edu/admissions/apply/transfer-applicants/transfer-credit-and-credit-by-exam/high-school-transfer-equivalencies/
+- https://tulsaschools.community.diligentoneplatform.com/document/43cb3541-54d9-4ec3-b4d0-1ef73a68e234/?modified=2024-11-01T00%3A35%3A29.603
+- https://utulsa.edu/admissions/apply/other-students/
+- https://utulsa.edu/academics/engineering-computer-science/impact/stem-initiatives/utulsa-stem-bootcamp/
+- https://sites.utulsa.edu/cie/program-initiatives/
+- https://utulsa.edu/academics/business/
+- https://sites.utulsa.edu/cie/jolt/
+- https://sites.utulsa.edu/cie/hurricane-pitch-competition/
+- https://calendar.utulsa.edu/event/hurricane-pitch-competition-applications-open/
+- https://givingday.utulsa.edu/pages/cie-center-for-innovation-and-entrepreneurship
+- https://utulsa.edu/student-life/canecareers/
+- https://utulsa.edu/student-life/canecareers/employers/career-fairs/
+- https://utulsa.edu/student-life/canecareers/employers/
+- https://utulsa.edu/academics/business/opportunities/collins-career-accelerator-program/
+- https://utulsa.edu/news/student-managed-investment-fund-surpasses-9-million/
+- https://utulsa.edu/academics/engineering-computer-science/
+- https://utulsa.edu/academics/engineering-computer-science/academics/departments/computer-science/
+- https://utulsa.edu/academics/engineering-computer-science/academics/departments/school-cyber-studies/cyber-efforts/
+- https://utulsa.edu/academics/engineering-computer-science/opportunities/centers-institutes/cyber-corps/
+- https://utulsa.edu/news/utulsas-oklahoma-cyber-innovation-institute-launches-states-first-cyber-range/
+- https://utulsa.edu/research/ocii/
+- https://utulsa.edu/news/oklahoma-cyber-innovation-institute-welcomes-public-into-its-new-home-in-downtown-tulsa/
+- https://utulsa.edu/news/oklahoma-cyber-innovation-institute-travels-state-to-connect-with-kids/
+- https://calendar.utulsa.edu/tag/cyber-security/
+- https://utulsa.edu/research/robotics-institute/
+- https://utulsa.edu/academics/engineering-computer-science/opportunities/centers-institutes/
+- https://utulsa.edu/research/office-of-technology-commercialization/
+- https://utulsa.edu/research/office-of-technology-commercialization/industry-partners/
+- https://utulsa.edu/academics/engineering-computer-science/opportunities/ecs-research/
+- https://utulsa.edu/research/research-opportunities/consortia-joint-industry-projects/
+- https://www.tuffp.org/
+- https://utulsa.edu/news/tulsa-university-fluid-flow-projects-turns-50/
+- https://utulsa.edu/news/gencyber-tulsa-2023-nsa/
+- https://www.eda.gov/sites/default/files/2023-11/Tulsa_Hub_for_Equitable_Trustworthy_Autonomy.pdf
+- https://www.eda.gov/funding/programs/regional-technology-and-innovation-hubs/2023/Tulsa-Tech-Hub
+- https://utulsa.edu/news/how-tally-receipts-turned-a-utulsa-pitch-win-into-a-growing-startup/
+- https://utulsa.edu/news/tu-students-skincheck-app-named-sxsw-finalist/
+- https://utulsa.edu/news/tus-hurricane-ventures-announces-first-two-startup-investments/
+- https://utulsa.edu/news/hurricane-ventures-announces-investment-in-tobe-energy/
+- https://utulsa.edu/news/hurricane-ventures-announces-investments-in-bpendo-titan-intake/
+- https://www.prnewswire.com/news-releases/utulsas-hurricane-ventures-announces-investments-in-percipio-health-prelude-302395012.html
+- https://cintrifuse.com/lyceum-ai-acquired-by-perceptyx-marking-first-venture-velocity-exit-for-cintrifuse-program/
+- https://utulsa.edu/news/utulsas-hurricane-ventures-announces-investment-in-bioreact/
+- https://www.tulsainnovationlabs.com/tech-hubs-talent-training-program
+- https://tulsahighered.com/about/advisory-board/
+- https://www.linkedin.com/posts/swaymedical_casey-dropped-in-to-the-university-of-tulsa-activity-7140386095589974018-OeOv
+- https://sites.utulsa.edu/csg/events/
+- https://utulsa.edu/news/utulsa-performing-critical-reviews-of-products-seeking-green-uas-certification/
+- https://www.tulsainnovationlabs.com/impact-report-2025
+- https://www.eda.gov/sites/default/files/2024-07/THETA_Tech_Hub_Overarching_Narrative.pdf
+- https://luma.com/65vz20c7
+- https://real-estate.utulsa.edu/previous-events/
+- https://projects.propublica.org/nonprofits/full_text/202641359349312129/IRS990ScheduleR
+- https://www.hurricanevc.com
+- https://www.prnewswire.com/news-releases/technology-developed-at-the-university-of-tulsa-and-licensed-by-fortysix-venture-capital-could-advance-cancer-testing-and-targeted-therapeutics-301718170.html
+- https://sites.utulsa.edu/cie/about-us/
+- https://projects.propublica.org/nonprofits/full_text/202523219349308302/IRS990ScheduleI
+- https://apps.irs.gov/pub/epostcard/990/xml/2025/2025_TEOS_XML_11A.zip
+- https://www.williams.com/2020/04/16/engineering-a-world-of-change/
+- https://utulsa.edu/news/hurricane-ventures-announces-investments-in-percipio-health-prelude/
+- https://www.prnewswire.com/news-releases/utulsas-hurricane-ventures-announces-investment-in-tobe-energy-302649084.html
+- https://utulsa.edu/academics/business/opportunities/student-investment-fund/
+- https://utulsa.edu/academics/engineering-computer-science/opportunities/ecs-research/cyber/cybersecurity-centers-and-institutes/
+- https://rfps.its.ms.gov/Procurement/rfps/4313/4313ss.pdf
+- https://utulsa.edu/wp-content/uploads/2019/07/07-03-19-Cybersecurity-Booklet.pdf
+- https://www.synercontechnologies.com/wp-content/uploads/2016/01/SSS-ADEM3-WebContent.pdf
+- https://apps.irs.gov/pub/epostcard/990/xml/2025/2025_TEOS_XML_11C.zip
+
+From the [Tulsa Ecosystem Map](https://ecosystem.samcarlton.com/university-of-tulsa), retrieved 2026-11-18 through its MCP server.

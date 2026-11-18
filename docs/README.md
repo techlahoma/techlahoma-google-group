@@ -35,7 +35,7 @@ Create a folder only when its first real document exists.
 - [Operations: fresh native Windows and macOS setup](operations/fresh-machine-setup.md)
 - [Verification: fresh-machine bootstrap](verification/fresh-machine-bootstrap-2026-08-06.md)
 - [Public event materials: Intro to Google Developer Group](events/README.md)
-- [Verification: Techlahoma Google Apps Starter](verification/google-app-starter-2026-08-03.md)
+- [Verification: Techlahoma Google Group](verification/google-app-starter-2026-08-03.md)
 
 ## Initiative slices
 

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "initialized": true,
-  "name": "Techlahoma Google Apps Starter",
-  "slug": "techlahoma-google-apps-starter",
+  "name": "Techlahoma Google Group",
+  "slug": "techlahoma-google-group",
   "description": "Techlahoma's static-first, agent-friendly Firebase and Google Cloud starter for small workshop apps.",
   "initialized_at": "2026-08-03",
   "profiles": [

@@ -62,8 +62,8 @@ Restart PowerShell or Antigravity, then verify `bun --version` prints `1.3.14`. 
 ```powershell
 New-Item -ItemType Directory -Force C:\src
 Set-Location C:\src
-git clone https://github.com/techlahoma/techlahoma-google-apps-starter.git
-Set-Location techlahoma-google-apps-starter
+git clone https://github.com/techlahoma/techlahoma-google-group.git
+Set-Location techlahoma-google-group
 bun run setup:doctor
 bun install --frozen-lockfile
 bun run setup:doctor
@@ -101,8 +101,8 @@ Open a new terminal and confirm `bun --version` prints `1.3.14`. Follow Bun's of
 ### 3. Clone and start
 
 ```sh
-git clone https://github.com/techlahoma/techlahoma-google-apps-starter.git
-cd techlahoma-google-apps-starter
+git clone https://github.com/techlahoma/techlahoma-google-group.git
+cd techlahoma-google-group
 bun run setup:doctor
 bun install --frozen-lockfile
 bun run setup:doctor

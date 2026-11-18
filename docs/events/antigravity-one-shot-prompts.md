@@ -3,13 +3,13 @@
 ## SBC4
 
 - `Tease:` One paste should produce one running demo.
-- `Lede:` Clone the public Techlahoma Google Apps Starter once and open it in Antigravity. Each prompt then uses the embedded `build-and-launch-demo` skill to create a new `apps/<slug>` workspace, complete it without conversational checkpoints, verify it, and leave a local URL running.
+- `Lede:` Clone the public Techlahoma Google Group once and open it in Antigravity. Each prompt then uses the embedded `build-and-launch-demo` skill to create a new `apps/<slug>` workspace, complete it without conversational checkpoints, verify it, and leave a local URL running.
 - `Why it matters:` Current Gemini 3 guidance favors concise, direct, consistently structured instructions over elaborate older prompt-engineering rituals. The reusable workflow belongs in the repository skill, while each prompt should describe the artifact and its observable definition of done.
 - `Go deeper:` Start with the CRM for practical value, Bison Byte Dash for spectacle, Room Pulse for audience interaction, or Neighborhood Quest Studio to demonstrate Addy Osmani's agent-skills pack.
 
 - **Prepared:** 2026-08-04 (America/Chicago)
 - **Target:** Gemini 3.6 Flash through Antigravity
-- **Starter:** `https://github.com/techlahoma/techlahoma-google-apps-starter.git`
+- **Starter:** `https://github.com/techlahoma/techlahoma-google-group.git`
 
 ## Current Gemini prompt decisions
 
@@ -36,8 +36,8 @@ cloud resources, authenticate an external account, or use real customer data.
 
 # Workspace
 
-Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-apps-starter.
-Confirm its root package is techlahoma-google-apps-starter; do not clone another repository.
+Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-group.
+Confirm its root package is techlahoma-google-group; do not clone another repository.
 Read its AGENTS.md, PROJECT.md, apps/AGENTS.md, active starter addenda, and embedded
 build-and-launch-demo skill. Follow that skill for the rest of this request.
 
@@ -98,8 +98,8 @@ account, or imply that a local demo is a public multi-device service.
 
 # Workspace
 
-Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-apps-starter.
-Confirm its root package is techlahoma-google-apps-starter; do not clone another repository.
+Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-group.
+Confirm its root package is techlahoma-google-group; do not clone another repository.
 Read the root and apps instructions and use the embedded build-and-launch-demo skill.
 
 Create this artifact as a new apps/room-pulse workspace using the root app:create plan
@@ -158,8 +158,8 @@ Google product artwork, or another game's exact mechanics.
 
 # Workspace
 
-Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-apps-starter.
-Confirm its root package is techlahoma-google-apps-starter; do not clone another repository.
+Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-group.
+Confirm its root package is techlahoma-google-group; do not clone another repository.
 Read the root and apps instructions and use the embedded build-and-launch-demo skill.
 
 Create this artifact as a new apps/bison-byte-dash workspace using the root app:create
@@ -220,8 +220,8 @@ resources, or modify unrelated global configuration.
 
 # Workspace and skills
 
-Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-apps-starter.
-Confirm its root package is techlahoma-google-apps-starter; do not clone another repository.
+Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-group.
+Confirm its root package is techlahoma-google-group; do not clone another repository.
 Read the root and apps instructions and its embedded build-and-launch-demo skill.
 
 Create this artifact as a new apps/neighborhood-quest-studio workspace using the root

@@ -3,7 +3,7 @@
 - `Tease:` Keep portability and secret checks executable.
 - `Lede:` Windows CI uses a disposable cache beside its checkout; secret scanning uses the open-source Gitleaks CLI pinned in `mise.toml`.
 - `Why it matters:` Package installation and scanner licensing failures must not turn into skipped verification.
-- `Go deeper:` See [Guardrails](../../.github/workflows/guardrails.yml) and [the failed run](https://github.com/techlahoma/techlahoma-google-apps-starter/actions/runs/35004344892).
+- `Go deeper:` See [Guardrails](../../.github/workflows/guardrails.yml) and [the failed run](https://github.com/techlahoma/techlahoma-google-group/actions/runs/35004344892).
 
 ## Windows install
 

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="A 2010-style search page for your own Markdown brain. Runs in your browser. A throwback for GDG Tulsa; not affiliated with Google."
+    />
+    <title>Google</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cardo:wght@700&display=swap"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" id="favicon" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body data-route="home">
+    <a class="skip-link" href="#view">Skip to content</a>
+    <div class="gbar">
+      <nav class="gbar-left" aria-label="Brain folders" id="gbar-folders"></nav>
+      <nav class="gbar-right" aria-label="Account">
+        <a href="#/setup">Setup</a> |
+        <a href="#/settings">Search settings</a>
+      </nav>
+    </div>
+    <header class="rhead">
+      <a class="rhead-logo" href="#/" aria-label="Home">
+        <span class="logo small" data-logo></span>
+      </a>
+      <form class="rhead-form" id="rhead-form" role="search">
+        <label class="visually-hidden" for="rhead-query">Search your brain</label>
+        <input
+          id="rhead-query"
+          class="box"
+          name="q"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          enterkeyhint="search"
+          data-query-input
+        />
+        <button type="submit" class="gbutton search-button">Search</button>
+      </form>
+    </header>
+    <main id="view" tabindex="-1"></main>
+    <footer class="footer">
+      <p>
+        <a href="#/setup">AI app setup</a> - <a href="#/settings">Search settings</a> -
+        <a href="https://github.com/techlahoma/techlahoma-google-group/tree/main/apps/brain-search"
+          >About this demo</a
+        >
+      </p>
+      <p>© 2010 - a throwback for GDG Tulsa · Not affiliated with Google</p>
+      <p class="engine-status" id="engine-status" aria-live="polite">Loading your brain…</p>
+    </footer>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

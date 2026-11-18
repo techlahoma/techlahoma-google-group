@@ -77,7 +77,7 @@ through the internal gates below in order.
 
 Run this prompt only from a clean fresh clone or clean isolated checkout of:
 
-https://github.com/techlahoma/techlahoma-google-apps-starter
+https://github.com/techlahoma/techlahoma-google-group
 
 Do not run it concurrently with another task modifying the root lockfile.
 
@@ -105,7 +105,7 @@ This prompt does not authorize:
 
 # Workspace
 
-Confirm the root package is `techlahoma-google-apps-starter`.
+Confirm the root package is `techlahoma-google-group`.
 
 Read:
 

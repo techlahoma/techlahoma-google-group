@@ -30,7 +30,7 @@ Prepare only the tools required for the user's requested local outcome. Read [`d
 
 ## Finish the repository setup
 
-1. Prefer a short, user-owned Windows path such as `C:\src\techlahoma-google-apps-starter`.
+1. Prefer a short, user-owned Windows path such as `C:\src\techlahoma-google-group`.
 2. Run `bun install --frozen-lockfile` from the repository root.
 3. Run `bun run setup:doctor` again and resolve required failures.
 4. Run `bun run browser:install` only when the task needs browser verification; disclose that it downloads a browser and uses additional disk space.
