@@ -9,7 +9,7 @@
       name="description"
       content="A 2010-style search page for your own Markdown brain. Runs in your browser. A throwback for GDG Tulsa; not affiliated with Google."
     />
-    <title>Google</title>
+    <title>Brainoogle</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,15 +25,15 @@
     <div class="gbar">
       <nav class="gbar-left" aria-label="Brain folders" id="gbar-folders"></nav>
       <nav class="gbar-right" aria-label="Account">
-        <a href="#/setup">Setup</a> |
-        <a href="#/settings">Search settings</a>
+        <a href="/setup">Setup</a> |
+        <a href="/settings">Search settings</a>
       </nav>
     </div>
     <header class="rhead">
-      <a class="rhead-logo" href="#/" aria-label="Home">
+      <a class="rhead-logo" href="/" aria-label="Home">
         <span class="logo small" data-logo></span>
       </a>
-      <form class="rhead-form" id="rhead-form" role="search">
+      <form class="rhead-form" id="rhead-form" action="/search" method="get" role="search">
         <label class="visually-hidden" for="rhead-query">Search your brain</label>
         <input
           id="rhead-query"
@@ -51,7 +51,7 @@
     <main id="view" tabindex="-1"></main>
     <footer class="footer">
       <p>
-        <a href="#/setup">AI app setup</a> - <a href="#/settings">Search settings</a> -
+        <a href="/setup">AI app setup</a> - <a href="/settings">Search settings</a> -
         <a href="https://github.com/techlahoma/techlahoma-google-group/tree/main/apps/brain-search"
           >About this demo</a
         >

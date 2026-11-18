@@ -2,13 +2,19 @@
 /**
  * Build the search index for a brain folder.
  *
- *   bun run index                         # index ./brain into ./public
- *   BRAIN_DIR=~/Brain bun run index       # index any brain folder
- *   bun run index -- --check              # read-only: is the index current?
+ *   bun run index                                # bundled example brain -> public/
+ *   BRAIN_DIR="/abs/path/Brain" bun run index    # your brain -> .brain-local/
+ *   bun run index -- --check                     # read-only: is the index current?
+ *
+ * A personal brain (any BRAIN_DIR other than the bundled one) is written to
+ * .brain-local/, which is gitignored and never built into dist/. The dev and
+ * preview servers serve it at /local/, and the page prefers it over the
+ * bundled example. Each run ends by printing the exact re-index command.
  *
  * Environment:
  *   BRAIN_DIR       brain folder to read (default: <app>/brain)
- *   OUT_DIR         where to write the index (default: <app>/public)
+ *   OUT_DIR         where to write the index (default: <app>/.brain-local for
+ *                   a personal brain, <app>/public for the bundled example)
  *   BRAIN_LOCATION  how prompts should name the brain, e.g. "github.com/me/brain"
  *                   (default: BRAIN_DIR as given, or apps/brain-search/brain)
  *   BRAIN_OWNER     first name for the wordmark, e.g. Sam -> "Samoogle"
@@ -51,11 +57,14 @@ const brainDirInput = process.env.BRAIN_DIR?.trim();
 const brainDir = brainDirInput
   ? resolve(brainDirInput.replace(/^~(?=$|\/)/, process.env.HOME ?? '~'))
   : join(APP_DIR, 'brain');
-const outDir = resolve(process.env.OUT_DIR?.trim() || join(APP_DIR, 'public'));
+const bundled = brainDir === join(APP_DIR, 'brain');
+const outDir = resolve(
+  process.env.OUT_DIR?.trim() ||
+    join(APP_DIR, bundled ? 'public' : '.brain-local'),
+);
+const locationInput = process.env.BRAIN_LOCATION?.trim() ?? '';
 const brainLocation =
-  process.env.BRAIN_LOCATION?.trim() ||
-  brainDirInput ||
-  'apps/brain-search/brain';
+  locationInput || (bundled ? 'apps/brain-search/brain' : brainDir);
 const owner = process.env.BRAIN_OWNER?.trim() ?? '';
 const model = process.env.BRAIN_MODEL?.trim() || DEFAULT_MODEL;
 const checkOnly = process.argv.includes('--check');
@@ -149,9 +158,7 @@ async function main(): Promise<void> {
       console.log('Index is up to date.');
       return;
     }
-    console.error(
-      'Index is out of date. Run: bun run --cwd apps/brain-search index',
-    );
+    console.error(`Index is out of date. Run:\n  ${reindexCommand()}`);
     process.exitCode = 1;
     return;
   }
@@ -222,4 +229,34 @@ async function main(): Promise<void> {
   }
 }
 
+/** Quote a value for a POSIX shell line. */
+function shellQuote(value: string): string {
+  return /^[\w@%+=:,./-]+$/.test(value)
+    ? `"${value}"`
+    : `'${value.replace(/'/g, "'\\''")}'`;
+}
+
+/** The exact command that re-indexes this brain with the same settings. */
+function reindexCommand(): string {
+  const env = [
+    bundled ? '' : `BRAIN_DIR=${shellQuote(brainDir)}`,
+    locationInput ? `BRAIN_LOCATION=${shellQuote(locationInput)}` : '',
+    owner ? `BRAIN_OWNER=${shellQuote(owner)}` : '',
+    process.env.OUT_DIR?.trim() ? `OUT_DIR=${shellQuote(outDir)}` : '',
+  ].filter(Boolean);
+  return [...env, `bun run --cwd ${shellQuote(APP_DIR)} index`].join(' ');
+}
+
 await main();
+if (!checkOnly && process.exitCode !== 1) {
+  console.log('');
+  if (!bundled) {
+    console.log(
+      `Your index is in ${outDir} (gitignored: never committed or deployed).`,
+    );
+  }
+  console.log('Re-index after you edit notes (copy this one line):');
+  console.log(`  ${reindexCommand()}`);
+  console.log('Start the search page:');
+  console.log(`  bun run --cwd ${shellQuote(APP_DIR)} dev`);
+}

@@ -1,2 +1,4 @@
 .cache/
 test-results/
+# Personal brain indexes (BRAIN_DIR=... bun run index). Never commit or deploy.
+.brain-local/

@@ -29,8 +29,13 @@ Skip small talk, secrets, and anything you can't source.
 4. **Update `index.md`**: add a link under the folder's heading, sorted by title.
    Links only.
 5. **Report back**: list the files you created or changed, in one line each.
-6. If Brain Search is installed, rebuild its index:
-   `bun run --cwd apps/brain-search index` (or `BRAIN_DIR=<brain> bun run index`).
+6. If Brain Search is installed, rebuild its index. Always set `BRAIN_DIR` to
+   this brain, with absolute quoted paths (the indexer prints this exact line,
+   filled in, at the end of every run):
+
+   ```sh
+   BRAIN_DIR="/absolute/path/to/this/brain" bun run --cwd "/absolute/path/to/techlahoma-google-group/apps/brain-search" index
+   ```
 
 ## Rules
 

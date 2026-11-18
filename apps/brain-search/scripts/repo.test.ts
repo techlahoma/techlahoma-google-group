@@ -11,6 +11,8 @@ import {
 import type {BrainIndex, VectorIndex} from '../src/lib/search';
 import {syncedReadme} from './sync-readme';
 import {faviconSvg} from '../src/lib/brand';
+import {DEFAULT_SETTINGS} from '../src/settings';
+import {fillTemplate} from './prerender';
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BRAIN = join(APP, 'brain');
@@ -91,4 +93,30 @@ test('README setup section matches SETUP.md (run `bun run readme:apply`)', () =>
 test('public/favicon.svg matches faviconSvg("g") (run `bun scripts/write-favicon.ts`)', () => {
   const file = readFileSync(join(APP, 'public/favicon.svg'), 'utf8');
   expect(file).toBe(`${faviconSvg('g')}\n`);
+});
+
+test('pre-render fills the page shell with real content', () => {
+  const template = readFileSync(join(APP, 'index.html'), 'utf8');
+  const index = JSON.parse(
+    readFileSync(join(APP, 'public/brain-index.json'), 'utf8'),
+  ) as BrainIndex;
+  const ctx = {
+    index,
+    settings: {...DEFAULT_SETTINGS},
+    ownerName: 'Sam',
+    setupMarkdown: readFileSync(join(APP, 'SETUP.md'), 'utf8'),
+  };
+  const note = fillTemplate(template, ctx, {
+    name: 'note',
+    path: 'orgs/gdg-tulsa.md',
+  });
+  expect(note).toContain('<body data-route="note">');
+  expect(note).toContain('<title>GDG Tulsa - Samoogle</title>');
+  expect(note).toContain('<article class="reader">');
+  const folder = fillTemplate(template, ctx, {name: 'folder', folder: 'orgs'});
+  expect(folder).toContain('class="g"');
+  expect(folder).toContain('href="/n/orgs/gdg-tulsa"');
+  const home = fillTemplate(template, ctx, {name: 'home'});
+  expect(home).toContain('id="logo-label">Samoogle<');
+  expect(home).toContain('action="/search"');
 });

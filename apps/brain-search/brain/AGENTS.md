@@ -46,7 +46,7 @@ One-sentence summary.
 
 1. Read `index.md` and open the notes whose titles or folders match the question.
 2. Search the folder for the key words and their synonyms (grep, file search,
-   or the Brain Search page at `http://localhost:5173/#/search?q=...`).
+   or the Brain Search page at `http://localhost:5173/search?q=...`).
 3. Answer from the notes and cite their paths, for example `(orgs/techlahoma.md)`.
 4. If the brain has nothing relevant, say so plainly, then answer from other
    sources and cite them.
@@ -70,5 +70,13 @@ preference, a person's public role, a follow-up, a correction.
   or other people's contact details unless the user explicitly asks.
 - Do not make the brain public. If it lives in a GitHub repo, keep the repo private.
 - Prefer short notes. Split a note when it covers two topics.
-- After changing notes, rebuild the search index if Brain Search is set up:
-  `bun run --cwd apps/brain-search index` (or `BRAIN_DIR=<this folder> bun run index`).
+- After changing notes, rebuild the search index if Brain Search is set up.
+  Use absolute, quoted paths, and always set `BRAIN_DIR` to this brain
+  (without it, the bundled example brain is indexed instead):
+
+  ```sh
+  BRAIN_DIR="/absolute/path/to/this/brain" bun run --cwd "/absolute/path/to/techlahoma-google-group/apps/brain-search" index
+  ```
+
+  The indexer prints this exact line, already filled in, at the end of every
+  run: copy that one.

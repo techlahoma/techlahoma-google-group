@@ -4,7 +4,7 @@
  * still work with defaults.
  */
 export interface Settings {
-  /** Text of the editable logo. */
+  /** Custom logo text; '' means the default (a pun on the owner's name). */
   logo: string;
   /** First name, used by the "search yourself" Easter egg. */
   name: string;
@@ -13,18 +13,19 @@ export interface Settings {
   location: string;
 }
 
-export const DEFAULT_LOGO = 'Google';
 export const MAX_LOGO = 20;
 
 export const DEFAULT_SETTINGS: Settings = {
-  logo: DEFAULT_LOGO,
+  logo: '',
   name: '',
   instant: true,
   showScores: false,
   location: '',
 };
 
-const KEY = 'brain-search:settings:v2';
+const KEY = 'brain-search:settings:v3';
+/** Round 3 stored the logo as 'Google' by default; keep only real renames. */
+const OLD_KEY = 'brain-search:settings:v2';
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -34,8 +35,10 @@ export interface StorageLike {
 export function loadSettings(storage: StorageLike | null): Settings {
   try {
     const raw = storage?.getItem(KEY);
-    if (!raw) return {...DEFAULT_SETTINGS};
-    const saved = JSON.parse(raw) as Partial<Settings>;
+    const old = raw ? null : storage?.getItem(OLD_KEY);
+    if (!raw && !old) return {...DEFAULT_SETTINGS};
+    const saved = JSON.parse(raw ?? old ?? '{}') as Partial<Settings>;
+    if (!raw && saved.logo === 'Google') saved.logo = '';
     return {
       logo: cleanLogo(typeof saved.logo === 'string' ? saved.logo : ''),
       name: typeof saved.name === 'string' ? saved.name : '',
@@ -48,10 +51,9 @@ export function loadSettings(storage: StorageLike | null): Settings {
   }
 }
 
-/** One line, at most MAX_LOGO characters; empty falls back to the default. */
+/** One line, at most MAX_LOGO characters ('' means use the default). */
 export function cleanLogo(text: string): string {
-  const clean = text.replace(/\s+/g, ' ').trim().slice(0, MAX_LOGO);
-  return clean || DEFAULT_LOGO;
+  return text.replace(/\s+/g, ' ').trim().slice(0, MAX_LOGO);
 }
 
 export function saveSettings(

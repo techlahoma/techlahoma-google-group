@@ -3,7 +3,7 @@
 - `Tease:` A Markdown memory any AI app can read and write, plus a personal search page that runs in your browser.
 - `Lede:` `brain/` holds one-topic-per-file notes with an index and an agent contract; `bun run index` embeds them; `bun run dev` serves a search page that ranks by meaning and keywords and hands weak searches to Antigravity, Gemini, ChatGPT or Claude.
 - `Why it matters:` Closing demo for the Techlahoma / GDG Tulsa / Women in Tech workshop on 2026-11-19: everyone leaves with a brain their AI apps share.
-- `Go deeper:` [Antigravity prompt](PROMPT.md) · [Setup for every AI app](SETUP.md) (also below and at `#/setup` in the app) · [AI Studio demo](AI_STUDIO_PROMPT.md) · [No-install artifact](ARTIFACT_PROMPT.md) · [Seed from meetings](SEED_FROM_MEETINGS.md)
+- `Go deeper:` [Antigravity prompt](PROMPT.md) · [Setup for every AI app](SETUP.md) (also below and at `/setup` in the app) · [AI Studio demo](AI_STUDIO_PROMPT.md) · [No-install artifact](ARTIFACT_PROMPT.md) · [Seed from meetings](SEED_FROM_MEETINGS.md)
 
 Inspired by [brainmaxxing](https://github.com/poteto/brainmaxxing) by Lauren Tan (a Markdown brain
 plus skills, for Claude Code) and by FetchMoji ([ThatGuySam/emoji-search](https://github.com/ThatGuySam/emoji-search),
@@ -13,22 +13,29 @@ in-browser embeddings over a precomputed index). This app extends the idea to ev
 
 ```sh
 bun install                                   # once, from the repository root
-bun run --cwd apps/brain-search index         # build public/brain-index.json + brain-vectors.json
+bun run --cwd apps/brain-search index         # index the bundled example brain into public/
 bun run --cwd apps/brain-search dev           # open the printed address
 ```
 
-Search your own brain instead of the example one:
+Search your own brain instead of the example one (absolute, quoted paths):
 
 ```sh
-BRAIN_DIR=~/Brain BRAIN_LOCATION="~/Brain" bun run --cwd apps/brain-search index
+BRAIN_DIR="$HOME/Brain" BRAIN_LOCATION="~/Brain" BRAIN_OWNER="Sam" bun run --cwd apps/brain-search index
 ```
+
+A personal brain's index goes to `apps/brain-search/.brain-local/`, which is
+gitignored and never built into `dist/`. The dev and preview servers serve it at
+`/local/`, and the page uses it ahead of the bundled example (the footer then says
+"your brain"). Every run ends by printing the exact re-index command for that
+brain. Without `BRAIN_DIR`, the bundled example brain is indexed into `public/`.
 
 | Command | Effect |
 |---|---|
-| `bun run index` | Read `brain/**/*.md` (or `BRAIN_DIR`), chunk by heading, embed with `Xenova/all-MiniLM-L6-v2` (q8), write the index into `public/`. Skips work when nothing changed; output is byte-identical on re-runs. |
+| `bun run index` | Read `brain/**/*.md` (or `BRAIN_DIR`), chunk by heading, embed with `Xenova/all-MiniLM-L6-v2` (q8), and write the index into `public/` (or `.brain-local/` for `BRAIN_DIR`). Skips work when nothing changed; output is byte-identical on re-runs. |
 | `bun run index:check` | Read-only: exit 1 if the index is older than the brain. |
 | `NO_EMBED=1 bun run index` | Keyword (BM25) index only, no model download. |
-| `bun run check` | Typecheck, unit tests (including brain lint and index freshness), production build. |
+| `bun run check` | Typecheck, unit tests (including brain lint and index freshness), and a production build that pre-renders every page. |
+| `bun run preview` | Serve `dist/` like Firebase does (clean URLs, deep links). |
 | `bun run dev` | Vite dev server. |
 
 Other options: `BRAIN_OWNER` (first name for the wordmark), `OUT_DIR`, `BRAIN_MODEL`, `FORCE=1`. The model downloads once into
@@ -49,11 +56,26 @@ browser: page opens ──> fetch both files + start the model in a Web Worker
   `brain/folder/file.md` lines, and grey "Source - Similar" links. Light mode only.
   This is an homage for a Google Developer Group event; it doesn't use Google's logo
   image or fonts and is not affiliated with Google.
-- **The logo is editable text.** It says "Google" by default. Click it and type to
-  rename it ("Samoogle", "Valerie"); each letter keeps the blue, red, yellow, blue,
-  green, red sequence and the bevel. Enter or clicking away saves it in localStorage,
-  and Escape cancels. `?name=Sam` seeds "Samoogle" and `?logo=Valerie` seeds literal text.
-  The search button follows the logo ("Valerie Search").
+- **The logo is a pun on your name, and it's editable.** It defaults to the owner's
+  first name plus "oogle" (Sam → Samoogle, Katie → Katoogle). The name comes from
+  `?name=Sam`, the Search settings page, or `BRAIN_OWNER` at index time. With no
+  name it says **Brainoogle**. Click the logo and type to rename it live ("Valerie");
+  each letter keeps the blue, red, yellow, blue, green, red sequence and the bevel.
+  Enter or clicking away saves the rename in localStorage, and a saved rename wins
+  over the default. Escape cancels. `?logo=Valerie` sets literal text. The search
+  button and the tab icon follow the logo.
+- **Real URLs, pre-rendered.**
+  - Routes: `/`, `/search?q=…&in=people`, `/setup`, `/settings`, one page per
+    folder (`/people`, `/orgs`, `/events`, `/meetings`, `/notes`, `/ecosystem`,
+    `/products`), and one page per note (`/n/orgs/gdg-tulsa`).
+  - `bun run build` pre-renders every static route to `dist/<route>/index.html`
+    with the same render functions the browser uses (`src/render.ts`,
+    `scripts/prerender.ts`), so pages read without JS and can be crawled.
+  - In the browser, a small History API router renders links in place and handles
+    back and forward. Instant search replaces the URL as you type; submitting
+    pushes a new entry.
+  - Old hash links (`#/setup`, `#/search?q=`, `#q=`) redirect to the new paths.
+  - Unknown paths get a 2010-style "Not Found" page with a search box.
 - **Folders everywhere.** The top link bar (Everything, Organizations, People, Events,
   Meetings, Tools, Notes, Ecosystem, more ▾) and the results sidebar filter by brain
   folder. "Similar" ranks notes by how close their stored vectors are to that note
@@ -82,8 +104,10 @@ browser: page opens ──> fetch both files + start the model in a Web Worker
 - **Favicon:** an original serif letter in classic blue (`public/favicon.svg` plus
   32 px and 180 px PNGs). The tab icon changes to the first letter when you rename
   the logo.
-- **Deploying:** `firebase.json` serves `dist/` with immutable caching for
-  `/assets/**` and revalidation for `brain-*.json`.
+- **Deploying:** `firebase.json` serves `dist/` with clean URLs: static pages
+  first, then unknown paths fall back to `/index.html`. It sets immutable caching
+  for `/assets/**` and revalidation for `brain-*.json`. Pre-rendering always uses
+  the bundled `public/` index, never `.brain-local/`.
 
 ## The brain
 
@@ -107,14 +131,16 @@ in `meetings/` are **fictional samples** (`sample: true`) for the meeting-captur
 | `scripts/sync-readme.ts` | Copies `SETUP.md` into this README (`bun run readme:apply`) |
 | `scripts/write-favicon.ts` | Writes `public/favicon.svg`; the PNG fallbacks come from `rsvg-convert` |
 | `src/lib/` | Frontmatter, chunking, BM25, hybrid ranking, Markdown rendering, AI handoff |
-| `src/main.ts`, `src/settings.ts` | Home, results, skeleton, instant search, settings page, reader, setup page |
+| `src/render.ts` | Page markup as pure functions, shared by the browser and the pre-renderer |
+| `src/main.ts`, `src/settings.ts` | Router, loading, skeleton, instant search, settings |
+| `scripts/prerender.ts`, `vite.config.ts` | Build-time pre-rendering; `/local/` brain and clean URLs in dev and preview |
 | `src/embed.worker.ts`, `src/embedder.ts` | Query embedding in a Web Worker |
 | `src/lib/brand.ts` | Logo letter colors, folder links, Easter eggs |
 | `e2e/smoke.spec.ts` | Browser smoke test for `bun run app:browser:verify --app brain-search` |
 
 ## Setup for every AI app
 
-The section below is a copy of [SETUP.md](SETUP.md), which the app shows at `#/setup`.
+The section below is a copy of [SETUP.md](SETUP.md), which the app shows at `/setup`.
 
 <!-- SETUP:START -->
 # Set up your brain in any AI app
@@ -200,11 +226,15 @@ Run Brain Search on your brain:
 
 ```sh
 bun install
-BRAIN_DIR=~/Brain bun run --cwd apps/brain-search index
+BRAIN_DIR="$HOME/Brain" bun run --cwd apps/brain-search index
 bun run --cwd apps/brain-search dev
 ```
 
-Then open the address it prints. If a search comes up short, use the
+Set `BRAIN_DIR` to your brain's absolute path (without it, the bundled example
+brain is indexed). Your index goes to `apps/brain-search/.brain-local/`, which is
+gitignored, so your notes are never committed or deployed. The indexer ends by
+printing the exact re-index command for your brain. Then open the address the
+dev server prints. If a search comes up short, use the
 **Antigravity / Gemini / ChatGPT / Claude** buttons: each copies a ready-made
 prompt and opens the app, so the AI can dig deeper and capture the answer.
 

@@ -5,6 +5,48 @@
 - `Why it matters:` Sam can compare this with the other trials and only needs to look at the decisions and gaps listed below.
 - `Go deeper:` [README](README.md), [SETUP.md](SETUP.md), [PROMPT.md](PROMPT.md), [surface research](../../docs/research/brain-search-ai-surfaces-2026-11-18.md).
 
+## Round 5 (2026-11-18): name-pun logo, real URLs, setup fixes
+
+- **Logo:**
+  - The default is a pun on the owner's first name: Sam → Samoogle, Katie → Katoogle, and "Brainoogle" when no name is known.
+  - The name comes from `?name=`, the Search settings page, or `BRAIN_OWNER` stored in the index.
+  - A saved click-to-rename wins over the default. A rename that equals the default is stored as "default". `?name=` clears an older rename.
+  - Settings key is now v3; a v2 logo of "Google" (the old default) is dropped, and real v2 renames are kept.
+- **Routes:** `/`, `/search?q=…&in=<folder>`, `/setup`, `/settings`, `/<folder>` (2010-style listing), and `/n/<folder>/<slug>` (reader).
+  - `src/render.ts` holds all page markup as pure functions.
+  - `scripts/prerender.ts` runs from a Vite plugin after `vite build` and writes 94 pages to `dist/<route>/index.html` with real content, per-note meta descriptions, the gbar, logo and title.
+  - The client router (History API) renders same-origin links in place and handles back and forward. Instant typing pushes once when leaving another page, then replaces; submit pushes.
+  - Old `#/…` and `#q=` links redirect.
+  - Unknown paths render a 2010 "Not Found" with a search box.
+  - `vite preview` maps clean URLs to the pre-rendered files. Dev uses the SPA fallback plus client rendering.
+  - Search forms have `action="/search"`, so they degrade without JS.
+- **Personal brain stays out of git and dist:**
+  - `BRAIN_DIR` indexes go to `.brain-local/` (new entry in `apps/brain-search/.gitignore`). The dev and preview servers serve them at `/local/`, answering 204 when there is no personal index.
+  - The page tries `/local/` first and accepts only a 200 JSON response, so Firebase's HTML fallback is ignored and no 404s are logged. The footer says "(your brain)".
+  - Pre-rendering always uses the bundled `public/` index.
+- **Indexer:** prints the exact one-line re-index command, with absolute quoted paths and the same `BRAIN_LOCATION`/`BRAIN_OWNER`, plus the dev command, after every run. The `--check` error prints it too.
+- **Docs:**
+  - `brain/AGENTS.md`, the `brain-capture` and `brain-seed-from-meetings` skills, `SEED_FROM_MEETINGS.md` and `SETUP.md` now always include `BRAIN_DIR`, with absolute quoted paths, in a fill-in line.
+  - `PROMPT.md`:
+    - asks for absolute quoted paths, with an example;
+    - asks for the first name and gives the logo pun;
+    - says the index goes to the gitignored `.brain-local/`;
+    - warns that `bun install` covers the whole repo and can take a minute on slow Wi-Fi;
+    - step 6 now says plainly to open the brain folder as its own Antigravity project (or use "add folder"), with no promise of auto-loading.
+  - README describes routes, pre-rendering, the logo default and the local index.
+- **Commands run:**
+  - `bun run index` (bundled brain: up to date).
+  - A scratch personal brain indexed with `BRAIN_DIR` + `BRAIN_OWNER` wrote to `.brain-local/` and printed the re-index line; removed afterwards.
+  - `bun run check`: 41 tests pass, build plus pre-render OK.
+  - Root `bun test tests`, lint and format.
+  - `vite preview` on port 5309: `/setup`, `/people` and `/n/orgs/gdg-tulsa` served their pre-rendered titles; `/nope` fell back.
+  - Dev on port 5310: deep links 200; `/local/brain-index.json` 200 with a personal index and 204 without.
+  - Both servers stopped.
+- **Not verified:**
+  - Firebase serving `/setup` from `setup/index.html` with `cleanUrls` and `trailingSlash: false`: expected, but check after deploy.
+  - The rewritten smoke spec typechecks but has not run.
+  - The deployed site shows "Brainoogle" unless the bundled index is rebuilt with `BRAIN_OWNER=Sam bun run index` (that also changes the committed `public/brain-index.json`).
+
 ## Round 4 (2026-11-18): copy buttons, favicon, Gemini CLI check
 
 - **Copy buttons:**

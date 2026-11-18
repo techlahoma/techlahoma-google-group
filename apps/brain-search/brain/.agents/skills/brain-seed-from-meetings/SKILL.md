@@ -40,7 +40,11 @@ https://github.com/ThatGuySam/skills/tree/main/skills/sams-action-items
 
 Follow the `brain-capture` skill for every note: search first, update instead
 of duplicating, use the note format, update `index.md`. Then rebuild the Brain
-Search index if it's installed.
+Search index if it's installed, with `BRAIN_DIR` set to this brain:
+
+```sh
+BRAIN_DIR="/absolute/path/to/this/brain" bun run --cwd "/absolute/path/to/techlahoma-google-group/apps/brain-search" index
+```
 
 ## 4. Report
 

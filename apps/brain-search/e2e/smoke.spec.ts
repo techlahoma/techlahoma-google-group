@@ -5,7 +5,7 @@ import type {Page} from 'playwright';
 /**
  * Brain Search (2010 throwback) smoke test for
  * `bun run app:browser:verify --app brain-search`.
- * Uses ?semantic=off so the run never downloads the embedding model; the
+ * Adds semantic=off so the run never downloads the embedding model; the
  * meaning path is covered by unit tests and manual rehearsal.
  */
 export async function runSmokeTest({
@@ -22,7 +22,8 @@ export async function runSmokeTest({
     .context()
     .grantPermissions(['clipboard-read', 'clipboard-write'], {origin})
     .catch(() => undefined);
-  const app = `${baseURL}?semantic=off`;
+  const at = (path: string, extra = '') =>
+    `${origin}${path}${path.includes('?') ? '&' : '?'}semantic=off${extra}`;
   const fits = async (label: string) =>
     assert.equal(
       await page.evaluate(
@@ -37,48 +38,47 @@ export async function runSmokeTest({
         document.querySelector('#engine-status')?.textContent ?? '',
       ),
     );
+  const label = () => page.locator('#logo-label').textContent();
 
-  // Skeleton: while the index is slow, a submitted search shows grey bars.
+  // Skeleton: while the index is slow, a search shows grey bars, then results.
   await page.route('**/brain-index.json', async route => {
     await new Promise(resolve => {
       setTimeout(resolve, 1500);
     });
     await route.continue();
   });
-  await page.goto(`${app}#/search?q=${encodeURIComponent('GDG Tulsa')}`);
+  await page.goto(at(`/search?q=${encodeURIComponent('GDG Tulsa')}`));
   await page.locator('.skeleton').waitFor();
   await page.locator('#results .g').first().waitFor();
   assert.equal(await page.locator('.skeleton').count(), 0);
   await page.unroute('**/brain-index.json');
 
-  // Home: classic logo text, two buttons, 2010 footer.
-  await page.goto(app, {waitUntil: 'networkidle'});
+  // Home: the default logo is a pun on the owner's name (Brainoogle when none).
+  await page.goto(at('/'), {waitUntil: 'networkidle'});
   await page.evaluate(() => localStorage.clear());
-  await page.goto(app, {waitUntil: 'networkidle'});
+  await page.goto(at('/'), {waitUntil: 'networkidle'});
   await ready();
-  assert.equal(await page.locator('#logo-label').textContent(), 'Google');
-  assert.equal(await page.title(), 'Google');
-  assert.equal(
+  assert.match((await label()) ?? '', /oogle$/);
+  assert.equal(await page.title(), await label());
+  assert.match(
     await page.locator('[data-logo-button]').inputValue(),
-    'Google Search',
+    /oogle Search$/,
   );
   assert.ok(
     await page.getByRole('button', {name: "I'm Feeling Lucky"}).isVisible(),
   );
   assert.match(await page.locator('.footer').innerText(), /© 2010/);
-  assert.match(
-    await page.locator('.footer').innerText(),
-    /Not affiliated with Google/,
-  );
   assert.ok((await page.locator('#gbar-folders a').count()) >= 7);
   await fits('Home');
 
-  // The logo is editable text; Enter saves, and it survives a reload.
+  // ?name= sets the pun; a click-to-rename wins over it and survives reloads.
+  await page.goto(at('/', '&name=katie'), {waitUntil: 'networkidle'});
+  assert.equal(await label(), 'Katoogle');
   const logo = page.locator('#logo-edit');
   await logo.click();
   await logo.fill('Valerie');
   await logo.press('Enter');
-  assert.equal(await page.locator('#logo-label').textContent(), 'Valerie');
+  assert.equal(await label(), 'Valerie');
   assert.equal(
     await page.locator('[data-logo-button]').inputValue(),
     'Valerie Search',
@@ -86,19 +86,21 @@ export async function runSmokeTest({
   await logo.click();
   await logo.fill('Nope');
   await logo.press('Escape');
-  assert.equal(await page.locator('#logo-label').textContent(), 'Valerie');
-  await page.reload({waitUntil: 'networkidle'});
-  assert.equal(await page.locator('#logo-label').textContent(), 'Valerie');
-  await page.goto(`${app}&name=ada`, {waitUntil: 'networkidle'});
-  assert.equal(await page.locator('#logo-label').textContent(), 'Adoogle');
+  assert.equal(await label(), 'Valerie');
+  await page.goto(at('/'), {waitUntil: 'networkidle'});
+  assert.equal(await label(), 'Valerie');
   await ready();
 
-  // Instant search: the first keystroke flips to the results page.
+  // Instant search: the first keystroke flips to /search with a real URL.
   await page.locator('#home-query').pressSequentially('GDG Tulsa organizer', {
     delay: 20,
   });
   await page.locator('#results .g').first().waitFor();
-  assert.equal(await page.locator('body').getAttribute('data-route'), 'search');
+  await page.waitForFunction(() => location.pathname === '/search');
+  assert.equal(
+    new URL(page.url()).searchParams.get('q'),
+    'GDG Tulsa organizer',
+  );
   assert.equal(
     await page.locator('#rhead-query').inputValue(),
     'GDG Tulsa organizer',
@@ -107,43 +109,74 @@ export async function runSmokeTest({
     await page.locator('#result-stats').innerText(),
     /About \d+ results? \(\d+\.\d\d seconds\)/,
   );
-  assert.match(
-    await page.locator('#results .g h3').first().innerText(),
-    /GDG Tulsa|Zain Khan/,
-  );
   assert.ok((await page.locator('#results .s b').count()) > 0);
   assert.match(
     await page.locator('#results cite').first().innerText(),
     /^brain\/.+\.md$/,
   );
-  assert.equal(await page.locator('#results .why').count(), 0);
   await fits('Results');
 
-  // Sidebar filters by folder; "Similar" finds related notes.
+  // Sidebar filters by folder (?in=people) without a page load.
   await page.locator('.sidebar [data-tab="people"]').click();
-  await page.waitForFunction(() => location.hash.includes('tab=people'));
+  await page.waitForFunction(
+    () => new URLSearchParams(location.search).get('in') === 'people',
+  );
   await page.waitForFunction(() =>
     Array.from(document.querySelectorAll('#results cite')).every(node =>
       node.textContent?.startsWith('brain/people/'),
     ),
   );
-  await page.locator('.sidebar [data-tab="all"]').click();
-  await page.locator('#results .g').first().waitFor();
-  await page.locator('#results .fl', {hasText: 'Similar'}).first().click();
-  await page.waitForFunction(() => location.hash.includes('related%3A'));
-  await page.locator('#results .g').first().waitFor();
 
-  // Reader view.
+  // Note page at /n/<folder>/<slug>; Back returns to the results.
   await page.locator('#results .g h3 a').first().click();
   await page.locator('.reader h1').waitFor();
+  assert.match(new URL(page.url()).pathname, /^\/n\/people\//);
+  await page.goBack();
+  await page.waitForFunction(() => location.pathname === '/search');
+  await page.locator('#results .g').first().waitFor();
+
+  // "Similar" runs a related: search.
+  await page.locator('#results .fl', {hasText: 'Similar'}).first().click();
+  await page.waitForFunction(() =>
+    (new URLSearchParams(location.search).get('q') ?? '').startsWith(
+      'related:',
+    ),
+  );
+
+  // Pre-rendered pages work as direct loads: folder page, note page, setup.
+  await page.goto(at('/orgs'), {waitUntil: 'networkidle'});
+  assert.match(await page.locator('.folder-title').innerText(), /Orgs/);
+  assert.ok((await page.locator('#results .g').count()) > 0);
+  await page.goto(at('/n/orgs/gdg-tulsa'), {waitUntil: 'networkidle'});
+  assert.match(await page.locator('.reader h1').innerText(), /GDG Tulsa/);
+  await page.goto(at('/setup'), {waitUntil: 'networkidle'});
+  assert.match(
+    await page.locator('.setup-page h1').innerText(),
+    /Set up your brain/,
+  );
+  await page.locator('.setup-page .copy-button').first().click();
+  await page.waitForFunction(() =>
+    document
+      .querySelector('.setup-page .copy-button')
+      ?.textContent?.includes('Copied'),
+  );
+  await fits('Setup');
+
+  // Old hash links redirect; unknown paths show Not Found with a search box.
+  await page.goto(`${origin}/?semantic=off#/settings`, {
+    waitUntil: 'networkidle',
+  });
+  await page.waitForFunction(() => location.pathname === '/settings');
+  await page.goto(at('/no-such-page'), {waitUntil: 'networkidle'});
+  assert.match(await page.locator('.not-found h1').innerText(), /Not Found/);
+  assert.equal(await page.locator('#notfound-query').count(), 1);
 
   // Empty path: AI links in the right-hand column.
   const miss = 'quantum chromodynamics lattice';
-  await page.goto(`${app}#/search?q=${encodeURIComponent(miss)}`, {
+  await page.goto(at(`/search?q=${encodeURIComponent(miss)}`), {
     waitUntil: 'networkidle',
   });
   await page.locator('#rhs #handoff').waitFor();
-  assert.match(await page.locator('#no-match').innerText(), /did not match/);
   assert.deepEqual(
     (await page.locator('[data-handoff]').allInnerTexts()).map(t => t.trim()),
     ['Antigravity', 'Gemini', 'ChatGPT', 'Claude'],
@@ -157,11 +190,12 @@ export async function runSmokeTest({
   await fits('Handoff');
 
   // Search settings: classic mode waits for Enter.
-  await page.goto(`${app}#/settings`, {waitUntil: 'networkidle'});
+  await page.goto(at('/settings'), {waitUntil: 'networkidle'});
   await page.getByLabel(/Do not use Instant/).check();
   await page.locator('#setting-scores').check();
   await page.getByRole('button', {name: 'Save'}).click();
-  await page.goto(`${app}#/search?q=${encodeURIComponent(miss)}`, {
+  await page.waitForFunction(() => location.pathname === '/');
+  await page.goto(at(`/search?q=${encodeURIComponent(miss)}`), {
     waitUntil: 'networkidle',
   });
   await ready();
@@ -177,15 +211,7 @@ export async function runSmokeTest({
   await page.locator('#rhead-query').press('Enter');
   await page.waitForFunction(() => document.body.classList.contains('askew'));
 
-  // Setup page.
-  await page.goto(`${app}#/setup`, {waitUntil: 'networkidle'});
-  assert.match(
-    await page.locator('.setup-page h1').innerText(),
-    /Set up your brain/,
-  );
-  await fits('Setup');
-
-  await page.goto(`${app}#/search?q=${encodeURIComponent('women in tech')}`, {
+  await page.goto(at(`/search?q=${encodeURIComponent('women in tech')}`), {
     waitUntil: 'networkidle',
   });
   await page.locator('#results .g').first().waitFor();

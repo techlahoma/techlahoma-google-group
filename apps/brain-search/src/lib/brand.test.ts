@@ -84,7 +84,7 @@ describe('settings', () => {
     expect(loadSettings(null)).toEqual(DEFAULT_SETTINGS);
     expect(DEFAULT_SETTINGS.instant).toBe(true);
     expect(DEFAULT_SETTINGS.showScores).toBe(false);
-    expect(DEFAULT_SETTINGS.logo).toBe('Google');
+    expect(DEFAULT_SETTINGS.logo).toBe('');
   });
 
   test('round-trips and survives broken storage', () => {
@@ -112,14 +112,27 @@ describe('settings', () => {
     };
     expect(loadSettings(broken)).toEqual(DEFAULT_SETTINGS);
     expect(() => saveSettings(broken, DEFAULT_SETTINGS)).not.toThrow();
-    data.set('brain-search:settings:v2', '{not json');
+    data.set('brain-search:settings:v3', '{not json');
+    expect(loadSettings(storage)).toEqual(DEFAULT_SETTINGS);
+    const old = new Map<string, string>([
+      ['brain-search:settings:v2', '{"logo":"Google","instant":false}'],
+    ]);
+    const oldStorage = {
+      getItem: (k: string) => old.get(k) ?? null,
+      setItem: () => {},
+    };
+    expect(loadSettings(oldStorage).logo).toBe('');
+    expect(loadSettings(oldStorage).instant).toBe(false);
+    old.set('brain-search:settings:v2', '{"logo":"Valerie"}');
+    expect(loadSettings(oldStorage).logo).toBe('Valerie');
+    data.set('brain-search:settings:v3', '{not json');
     expect(loadSettings(storage)).toEqual(DEFAULT_SETTINGS);
   });
 });
 
 test('logo text is one short line with a default', () => {
   expect(cleanLogo('  Sam\noogle  ')).toBe('Sam oogle');
-  expect(cleanLogo('')).toBe('Google');
+  expect(cleanLogo('')).toBe('');
   expect(cleanLogo('x'.repeat(40))).toHaveLength(20);
 });
 

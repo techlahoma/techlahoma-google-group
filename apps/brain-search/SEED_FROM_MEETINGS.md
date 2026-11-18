@@ -16,7 +16,7 @@ My brain is at: [path, private GitHub repo, or Drive folder]. Read its AGENTS.md
 2. For each meeting write meetings/YYYY-MM-DD-short-title.md with attendees, a short summary, Decisions, Follow-ups and open questions. Create or update people/ and orgs/ notes for durable facts (roles, projects), never contact details.
 3. Capture follow-ups as checkbox lines with owner and due date. If you can, install or follow the action-items skill at https://github.com/ThatGuySam/skills/tree/main/skills/sams-action-items to find them.
 4. Search before writing: update existing notes instead of duplicating. Update index.md. Never invent attendees, decisions or dates; write TODO: verify when unsure. Summarize, don't quote.
-5. If Brain Search is installed, re-index: BRAIN_DIR=<brain> bun run --cwd apps/brain-search index
+5. If Brain Search is installed, re-index with absolute, quoted paths and BRAIN_DIR set to my brain (the indexer prints this line, filled in, after every run): BRAIN_DIR="/absolute/path/to/this/brain" bun run --cwd "/absolute/path/to/techlahoma-google-group/apps/brain-search" index
 6. Report: meetings processed, notes created and updated, follow-ups by owner, and anything skipped.
 
 [Paste transcripts here if the app can't reach your meeting notes.]

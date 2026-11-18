@@ -81,11 +81,15 @@ Run Brain Search on your brain:
 
 ```sh
 bun install
-BRAIN_DIR=~/Brain bun run --cwd apps/brain-search index
+BRAIN_DIR="$HOME/Brain" bun run --cwd apps/brain-search index
 bun run --cwd apps/brain-search dev
 ```
 
-Then open the address it prints. If a search comes up short, use the
+Set `BRAIN_DIR` to your brain's absolute path (without it, the bundled example
+brain is indexed). Your index goes to `apps/brain-search/.brain-local/`, which is
+gitignored, so your notes are never committed or deployed. The indexer ends by
+printing the exact re-index command for your brain. Then open the address the
+dev server prints. If a search comes up short, use the
 **Antigravity / Gemini / ChatGPT / Claude** buttons: each copies a ready-made
 prompt and opens the app, so the AI can dig deeper and capture the answer.
 
