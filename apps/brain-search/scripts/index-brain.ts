@@ -17,7 +17,8 @@
  *                   a personal brain, <app>/public for the bundled example)
  *   BRAIN_LOCATION  how prompts should name the brain, e.g. "github.com/me/brain"
  *                   (default: BRAIN_DIR as given, or apps/brain-search/brain)
- *   BRAIN_OWNER     first name for the wordmark, e.g. Sam -> "Samoogle"
+ *   BRAIN_OWNER     first name for the logo pun, e.g. Sam -> "Samoogle"
+ *                   (default: keep the owner already in this brain's index)
  *   BRAIN_MODEL     embedding model (default: Xenova/all-MiniLM-L6-v2)
  *   NO_EMBED=1      skip embeddings and write the keyword index only
  *   FORCE=1         rebuild even when the brain has not changed
@@ -44,6 +45,8 @@ import {
   type BrainFile,
 } from '../src/lib/build';
 import {
+  chunkSearchText,
+  decodeVectors,
   encodeVectors,
   type BrainIndex,
   type VectorIndex,
@@ -65,7 +68,9 @@ const outDir = resolve(
 const locationInput = process.env.BRAIN_LOCATION?.trim() ?? '';
 const brainLocation =
   locationInput || (bundled ? 'apps/brain-search/brain' : brainDir);
-const owner = process.env.BRAIN_OWNER?.trim() ?? '';
+const ownerEnv = process.env.BRAIN_OWNER;
+/** BRAIN_OWNER, or the owner already in this brain's index when it isn't set. */
+let owner = ownerEnv?.trim() ?? '';
 const model = process.env.BRAIN_MODEL?.trim() || DEFAULT_MODEL;
 const checkOnly = process.argv.includes('--check');
 const indexPath = join(outDir, 'brain-index.json');
@@ -105,34 +110,81 @@ function writeIfChanged(path: string, text: string): boolean {
   return true;
 }
 
-async function embed(texts: string[]): Promise<Float32Array> {
-  const {pipeline, env} = await import('@huggingface/transformers');
-  env.cacheDir = join(APP_DIR, '.cache', 'models');
-  const extractor = await pipeline('feature-extraction', model, {dtype: DTYPE});
-  const parts: Float32Array[] = [];
-  const batch = 16;
-  for (let i = 0; i < texts.length; i += batch) {
-    const output = await extractor(texts.slice(i, i + batch), {
-      pooling: 'mean',
-      normalize: true,
-    });
-    parts.push(output.data as Float32Array);
-    process.stdout.write(
-      `  embedded ${Math.min(i + batch, texts.length)}/${texts.length}\r`,
-    );
+/**
+ * Vectors from the previous run, keyed by the exact text that was embedded.
+ * Unchanged chunks reuse them, so editing one note re-embeds only that note.
+ * Re-quantizing a decoded int8 vector gives back the same bytes, so reuse
+ * cannot change the output file.
+ */
+function previousVectors(
+  existing: BrainIndex | null,
+  vectors: VectorIndex | null,
+): Map<string, Float32Array> {
+  const cache = new Map<string, Float32Array>();
+  if (
+    !existing ||
+    !vectors ||
+    vectors.encoding !== 'int8' ||
+    vectors.model !== model ||
+    vectors.dtype !== DTYPE ||
+    vectors.contentHash !== existing.contentHash
+  ) {
+    return cache;
   }
-  process.stdout.write('\n');
-  const total = parts.reduce((sum, part) => sum + part.length, 0);
-  const all = new Float32Array(total);
+  const decoded = decodeVectors(vectors.scales, vectors.vectors, vectors.dims);
+  existing.chunks.forEach((chunk, i) => {
+    const doc = existing.docs[chunk.doc];
+    if (!doc) return;
+    cache.set(
+      chunkSearchText(doc, chunk),
+      decoded.slice(i * vectors.dims, (i + 1) * vectors.dims),
+    );
+  });
+  return cache;
+}
+
+async function embed(
+  texts: string[],
+  cache: Map<string, Float32Array>,
+): Promise<{vectors: Float32Array; reused: number}> {
+  const missing = [...new Set(texts.filter(text => !cache.has(text)))];
+  const fresh = new Map<string, Float32Array>();
+  if (missing.length) {
+    const {pipeline, env} = await import('@huggingface/transformers');
+    env.cacheDir = join(APP_DIR, '.cache', 'models');
+    const extractor = await pipeline('feature-extraction', model, {
+      dtype: DTYPE,
+    });
+    const batch = 16;
+    for (let i = 0; i < missing.length; i += batch) {
+      const slice = missing.slice(i, i + batch);
+      const output = await extractor(slice, {pooling: 'mean', normalize: true});
+      const data = output.data as Float32Array;
+      const dims = data.length / slice.length;
+      slice.forEach((text, k) => {
+        const vector = data.slice(k * dims, (k + 1) * dims);
+        // Round to 6 decimals so tiny float noise across runs cannot change the file.
+        for (let d = 0; d < vector.length; d++) {
+          vector[d] = Math.round((vector[d] ?? 0) * 1e6) / 1e6;
+        }
+        fresh.set(text, vector);
+      });
+      process.stdout.write(
+        `  embedded ${Math.min(i + batch, missing.length)}/${missing.length}\r`,
+      );
+    }
+    process.stdout.write('\n');
+  }
+  const parts = texts.map(
+    text => fresh.get(text) ?? cache.get(text) ?? new Float32Array(),
+  );
+  const all = new Float32Array(parts.reduce((sum, p) => sum + p.length, 0));
   let offset = 0;
   for (const part of parts) {
     all.set(part, offset);
     offset += part.length;
   }
-  // Round to 6 decimals so tiny float noise across runs cannot change the file.
-  for (let i = 0; i < all.length; i++)
-    all[i] = Math.round((all[i] ?? 0) * 1e6) / 1e6;
-  return all;
+  return {vectors: all, reused: texts.length - missing.length};
 }
 
 async function main(): Promise<void> {
@@ -147,6 +199,7 @@ async function main(): Promise<void> {
   const hash = await contentHash(notes, model);
   const existing = readJson<BrainIndex>(indexPath);
   const existingVectors = readJson<VectorIndex>(vectorsPath);
+  if (ownerEnv === undefined) owner = existing?.owner ?? '';
   const indexCurrent =
     existing?.contentHash === hash &&
     existing.brainLocation === brainLocation &&
@@ -199,7 +252,11 @@ async function main(): Promise<void> {
     console.log(
       `Embedding with ${model} (${DTYPE}); first run downloads the model to .cache/models ...`,
     );
-    const vectors = await embed(embedTexts);
+    const {vectors, reused} = await embed(
+      embedTexts,
+      previousVectors(existing, existingVectors),
+    );
+    if (reused) console.log(`  reused ${reused} unchanged chunk vectors`);
     const dims = embedTexts.length ? vectors.length / embedTexts.length : 0;
     const payload: VectorIndex = {
       version: index.version,

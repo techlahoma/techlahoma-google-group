@@ -69,6 +69,15 @@ export async function runSmokeTest({
   );
   assert.match(await page.locator('.footer').innerText(), /© 2010/);
   assert.ok((await page.locator('#gbar-folders a').count()) >= 7);
+  // Setup and Search settings stay visible on phones (no sideways scroll).
+  assert.ok(
+    await page.locator('.gbar-right a', {hasText: 'Setup'}).isVisible(),
+  );
+  assert.ok(
+    await page
+      .locator('.gbar-right a', {hasText: 'Search settings'})
+      .isVisible(),
+  );
   await fits('Home');
 
   // ?name= sets the pun; a click-to-rename wins over it and survives reloads.

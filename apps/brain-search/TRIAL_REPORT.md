@@ -5,6 +5,39 @@
 - `Why it matters:` Sam can compare this with the other trials and only needs to look at the decisions and gaps listed below.
 - `Go deeper:` [README](README.md), [SETUP.md](SETUP.md), [PROMPT.md](PROMPT.md), [surface research](../../docs/research/brain-search-ai-surfaces-2026-11-18.md).
 
+## Round 6 (2026-11-18): template plus read-and-write memory
+
+- **Product framing:** the page is a finished template that agents connect to the user's context. They never rebuild it. The brain lives where the user picks, the page runs only on `127.0.0.1`, and every agent recalls from and captures to the brain.
+- **`PROMPT.md`** is rebuilt around that:
+  1. Get the template; the UI must not be rebuilt or restyled.
+  2. Inventory the context sources the agent can reach and let the user pick.
+  3. The user picks the brain's home.
+  4. Seed from real sources with citations, asking before reading anything sensitive.
+  5. Index, then start `dev` in watch mode on 127.0.0.1, never deployed.
+  6. Install the read-and-write loop in this agent and offer to set up other apps from `SETUP.md`.
+
+  The round 5 fixes are kept: absolute quoted paths, `BRAIN_DIR`, `.brain-local`, and the install-time warning.
+- **Watch mode:**
+  - With `BRAIN_DIR` set, the dev server indexes on start and again 600 ms after any `.md` change in the brain, never running two indexers at once. It then sends `brain:updated` over Vite's HMR socket.
+  - The page refetches `/local/`, refreshes the current view (search keeps your typing) and shows a toast.
+  - The indexer now re-embeds only chunks whose text changed. Output is byte-identical to a full rebuild: checked with sha256 against `FORCE=1` and against a fresh build.
+  - Tested on a scratch brain: started at 1 note, a second note added mid-run was re-indexed in about 1 second with "reused 1 unchanged chunk vectors".
+- **Indexer:** keeps the owner already in the index when `BRAIN_OWNER` isn't passed, so a plain `bun run index` no longer resets the bundled "Sam".
+- **Vite** now binds `dev` and `preview` to 127.0.0.1 by default. A `--host` flag still overrides it, as your port-5301 serve does.
+- **`SETUP.md` and the in-app `/setup`** are reorganized per app around reading and writing: where the brain can live, how the app reads, how it writes back, where the memory instructions go, and what the user does. Read-only cases get a write path: the agent drafts the note for the user to save, or a local agent commits it. The page is called out as local-only. Unverified items are marked (Cowork writes, the ChatGPT Drive or GitHub write actions, AI Studio sync as a notes workflow).
+- **`AI_STUDIO_PROMPT.md`:**
+  - The docs I fetched today confirm "Import from GitHub" and two-way sync. They don't say whether you can import one folder of a repo, whether private repos work, or whether it runs Bun.
+  - Path A imports the template and asks AI Studio to run it unchanged and put the user's notes in `brain/`. Path B uses AI Studio as a memory agent and points to oogle.web.app.
+  - The Google sign-in requirement is noted.
+- **`ARTIFACT_PROMPT.md`** was removed and replaced by **`WEB_MEMORY.md`** (using the brain as memory in ChatGPT and Claude Projects). Links are updated in the app README, `SETUP.md` (and so `/setup`), and the **root `README.md`** event entry; I also fixed the stale `#/setup` there. The root README is the only file outside `apps/brain-search` I touched.
+- **Phones:** below 700px, "Setup | Search settings" gets its own row on top and the folder links wrap instead of scrolling sideways, so the "more ▾" menu can open. The smoke test asserts both links are visible.
+- **Brain contract:** `brain/AGENTS.md` now opens with the loop (recall → capture → re-index → sync → tell the user), plus a read-only fallback and a "Re-index and sync" section: watch mode, the manual line, commit and push with a prompt before the first push, Drive or OneDrive, never deploy.
+  - `brain-capture` gains Re-index and Sync steps, and `brain-seed-from-meetings` gains sync plus "ask before sensitive".
+  - `brain-recall` points to the local page.
+  - `SEED_FROM_MEETINGS.md` matches.
+- **Commands run:** `bun run index` (up to date, owner kept), `bun run check`, root `bun test tests`, lint and format; see the final summary. A dev server on port 5311 tested watch mode and was stopped.
+- **Not verified:** watch mode's in-browser refresh (HMR event to toast); I checked the server log and the `/local/` JSON only. Also not verified: the phone layout, and AI Studio importing or running the template.
+
 ## Round 5 (2026-11-18): name-pun logo, real URLs, setup fixes
 
 - **Logo:**

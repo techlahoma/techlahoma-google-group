@@ -830,18 +830,27 @@ body.askew {
 }
 
 @media (max-width: 700px) {
+  /* Phones: Setup and Search settings get their own row on top, and the
+     folder links wrap (no sideways scroll, so "more" can still open). */
   .gbar {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-
-  .gbar-left {
-    flex-wrap: nowrap;
-    white-space: nowrap;
+    flex-wrap: wrap;
+    gap: 2px 10px;
   }
 
   .gbar-right {
-    flex: none;
+    order: -1;
+    width: 100%;
+    text-align: right;
+  }
+
+  .gbar-left {
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    line-height: 1.6;
+  }
+
+  .gbar-more ul {
+    right: 0;
   }
 
   .home-row {

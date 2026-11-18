@@ -19,6 +19,7 @@ this app can reach, in this order:
 - Text the user pastes into the chat.
 
 List what you found (title, date) and let the user deselect anything private.
+Ask before opening anything sensitive (HR, health, legal, money, one-on-ones).
 
 ## 2. For each meeting, extract
 
@@ -40,11 +41,15 @@ https://github.com/ThatGuySam/skills/tree/main/skills/sams-action-items
 
 Follow the `brain-capture` skill for every note: search first, update instead
 of duplicating, use the note format, update `index.md`. Then rebuild the Brain
-Search index if it's installed, with `BRAIN_DIR` set to this brain:
+Search index if it's installed and not in watch mode, with `BRAIN_DIR` set to
+this brain:
 
 ```sh
 BRAIN_DIR="/absolute/path/to/this/brain" bun run --cwd "/absolute/path/to/techlahoma-google-group/apps/brain-search" index
 ```
+
+Then sync: commit and push if the brain is a Git repo (ask before the first
+push), or save to the Drive/OneDrive folder.
 
 ## 4. Report
 

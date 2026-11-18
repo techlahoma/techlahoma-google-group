@@ -29,13 +29,20 @@ Skip small talk, secrets, and anything you can't source.
 4. **Update `index.md`**: add a link under the folder's heading, sorted by title.
    Links only.
 5. **Report back**: list the files you created or changed, in one line each.
-6. If Brain Search is installed, rebuild its index. Always set `BRAIN_DIR` to
-   this brain, with absolute quoted paths (the indexer prints this exact line,
-   filled in, at the end of every run):
+6. **Re-index.** If the local search page is running in watch mode
+   (`BRAIN_DIR=... bun run dev`), it re-indexes by itself. Otherwise run the
+   line the indexer printed last time, or fill this in with absolute quoted
+   paths (always set `BRAIN_DIR` to this brain):
 
    ```sh
    BRAIN_DIR="/absolute/path/to/this/brain" bun run --cwd "/absolute/path/to/techlahoma-google-group/apps/brain-search" index
    ```
+7. **Sync.** Git repo: commit the changed notes (`brain: update people/ada.md`)
+   and push; ask before the first push, never make the repo public. Drive or
+   OneDrive: a synced folder uploads by itself; through a connector, write the
+   files back. No write access: give the user the note text, its path and the
+   `index.md` line to save, or suggest an agent that can write (Codex, Claude
+   Code, Antigravity, a desktop app).
 
 ## Rules
 
@@ -44,5 +51,6 @@ Skip small talk, secrets, and anything you can't source.
 - One topic per file. If a note grows two topics, split it and link them.
 - Keep other people's private details (contact info, health, money) out unless
   the user explicitly asks.
-- Web chat apps can't write files: give the user the finished note text and the
-  exact path to save it at, plus the line to add to `index.md`.
+- A read-only connector or web chat can't write files: give the user the
+  finished note text and the exact path to save it at, plus the line to add to
+  `index.md`.

@@ -1,51 +1,60 @@
-# Google AI Studio demo: build the search page from a prompt
+# Google AI Studio: import the template, or use it as a memory agent
 
-- `Tease:` Show Brain Search being generated live in Google AI Studio's Build mode.
-- `Lede:` Build mode turns a prompt into a working web app. Paste the prompt below; the app it makes searches a brain you upload or paste in the browser.
-- `Why it matters:` It's the no-install path for the workshop's second demo surface, and it shows the same idea built a different way.
+- `Tease:` Bring the finished Brain Search template into AI Studio's Build mode, or use AI Studio to read and write brain notes.
+- `Lede:` Build mode documents "Import from GitHub" and two-way GitHub sync, so it can open this repository instead of generating a new page. Whether it runs this monorepo's Vite app in its preview is not confirmed, so there's a fallback.
+- `Why it matters:` The UI is done. AI Studio should connect it to your notes, not generate a new search page.
 - `Go deeper:` [AI Studio Build mode docs](https://aistudio.google.com/docs/aistudio-build-mode), [setup for every app](SETUP.md), [surface research](../../docs/research/brain-search-ai-surfaces-2026-11-18.md).
 
-## Honest limits (checked 2026-11-18)
+## What the official docs say (checked 2026-11-18)
 
-- Build mode **cannot read a folder on your computer**. The generated app
-  can let you pick or drop your brain's `.md` files in the browser.
-- Build mode can **import from GitHub** and sync both ways with a repo, so you
-  can also point it at this repository. Its docs don't mention system
-  instructions, `AGENTS.md` or skills for Build mode.
-- Files you load into the generated app stay in that browser tab unless the
-  app sends them to the Gemini API. The prompt below keeps search local and only
-  sends the top matching notes to Gemini when you press "Ask Gemini".
-- This is a demo, not your daily brain: notes you add in the app are not saved
-  back to your brain unless you download them.
+- Build mode imports code with **Import from GitHub**, from the **Add files** (+)
+  menu in the prompt box.
+- It can connect to a GitHub repository for **two-way sync**: push changes made in
+  AI Studio, and pull changes made elsewhere.
+- Its default stack is a React frontend with a Node.js runtime. You can edit files
+  in the **Code** tab, and **export a ZIP**.
+- The docs don't say whether you can import one folder of a repository, whether
+  private repos work, or whether it runs `bun` or this app's Vite scripts.
+- AI Studio needs a Google sign-in (seen in a test on 2026-11-18).
 
-## Copy this prompt into Build mode
+## Path A: import the template (try this first)
+
+1. Sign in at [aistudio.google.com](https://aistudio.google.com/) and open **Build**.
+2. In the prompt box, choose **+ → Import from GitHub** and pick
+   `techlahoma/techlahoma-google-group`. Paste this prompt:
 
 ```text
-Build a single-page web app called "Brain Search": a personal search engine over a folder of Markdown notes (a "brain").
+This repository contains a finished web app at apps/brain-search: a 2010-style search page over a folder of Markdown notes (a "brain"). Do not redesign, restyle or regenerate the UI. Keep its files as they are.
 
-Data
-- The user loads notes by choosing a folder or several .md files, dropping them on the page, or pasting one note into a text box. Keep everything in memory in the browser. Include a "Load example brain" button that loads three short example notes you write yourself, clearly labeled "sample".
-- Each note may start with a YAML frontmatter block between --- lines with title, tags (list), source (list of URLs) and updated (date). Parse it. Use the first # heading or the file name when there is no title. Skip index.md and AGENTS.md.
-
-Search
-- Split notes into chunks by ## heading. Build a BM25 keyword index over title + tags + chunk text (k1 = 1.2, b = 0.75), entirely in the browser.
-- One large, centered search box on a plain page with an original simple logo (not Google's colors or logo). Results show title, a snippet with matched words highlighted, tags as chips, the note path, and source links. Clicking a result shows the rendered note with safe HTML (escape everything; allow only http, https and relative links).
-- If there are no results or only weak ones (fewer than half the query words found), show a row of buttons: "Ask Gemini", "ChatGPT", "Claude". "Ask Gemini" calls the Gemini API with the question and the top 5 matching chunks and shows the answer with the note paths it used. "ChatGPT" and "Claude" copy a prompt ("Search my brain and answer: <query>. Cite note paths. Capture anything new as a note.") to the clipboard, then open https://chatgpt.com/?q=<encoded prompt> or https://claude.ai/new?q=<encoded prompt> in a new tab. Show a short message saying the prompt was copied.
-- Add a "New note" button that drafts a note in the frontmatter format and lets the user download it as a .md file.
-
-Quality
-- Works on a phone (390 px wide) and with a keyboard; visible focus; labels on every input.
-- Never send notes anywhere except the Gemini call the user starts with "Ask Gemini".
+1. Run apps/brain-search in the preview. It is a Vite + TypeScript app ("vite" dev server, entry apps/brain-search/index.html). If the preview can't run it, tell me exactly why and stop; don't rewrite it as a new app.
+2. My notes: I'll upload or paste Markdown files. Put them in apps/brain-search/brain/ (one topic per file, frontmatter with title, tags, source, updated). Then rebuild the search index the way apps/brain-search/README.md describes ("bun run index" in apps/brain-search), or tell me if the index can't be rebuilt here.
+3. Follow apps/brain-search/brain/AGENTS.md: search the notes before answering my questions, and write new notes back when I tell you something worth remembering.
 ```
 
-## Demo script (3 minutes)
+3. Upload or paste a few of your notes when it asks. If you connected a **private**
+   repository for two-way sync, your notes can be pushed there. Never push personal
+   notes to the public workshop repository.
 
-1. Open [AI Studio](https://aistudio.google.com/), choose **Build**, paste the prompt, run it.
-2. In the generated app, press **Load example brain**, search for a word from a note.
-3. Load the real starter brain: download `apps/brain-search/brain` from this repo
-   (or use **Import from GitHub**) and drop the `.md` files in.
-4. Search for something that isn't there (for example `best pizza in Tulsa`) to show
-   the AI buttons.
+If the preview runs, you have the template plus your notes. If it can't run the
+app (for example no Bun, or it only previews React apps it generated), use Path B.
 
-If Build mode output differs from the prompt, ask it in chat to fix the specific
-gap, for example "Results must show source links".
+## Path B: AI Studio as a memory agent
+
+Use AI Studio chat (or Build) to **read and write brain notes**, and see the page
+itself on your computer or at [oogle.web.app](https://oogle.web.app) (the example
+brain).
+
+```text
+You are my memory agent. I'll paste or upload notes from my "brain" (Markdown files with frontmatter: title, tags, source, updated; one topic per file; an index.md of links).
+
+Read: before answering, look through the notes I gave you and cite their paths. If they don't cover it, say so.
+Write: when I share something durable, write the finished note (path, frontmatter, body, sources) and the index.md line to add, so I can save it or have a local agent commit it.
+Never invent facts, dates or URLs.
+```
+
+## Honest limits
+
+- AI Studio can't read a folder on your computer. Notes reach it by upload,
+  paste, or a GitHub repository you connect.
+- The real search page runs locally (`bun run --cwd apps/brain-search dev`), so
+  nothing private goes online.

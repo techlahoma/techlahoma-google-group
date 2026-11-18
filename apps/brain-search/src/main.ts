@@ -749,5 +749,60 @@ window.addEventListener('popstate', () => {
   void render();
 });
 
+/**
+ * Watch mode: `BRAIN_DIR=... bun run dev` re-indexes when notes change and
+ * sends `brain:updated` over Vite's HMR socket. Refetch the personal index and
+ * refresh the current view without losing what the user is typing.
+ */
+async function reloadLocalBrain(): Promise<void> {
+  const index = await fetchJson<BrainIndex>('/local/brain-index.json');
+  if (!index) return;
+  const meta = await fetchJson<VectorIndex>('/local/brain-vectors.json');
+  state.index = index;
+  state.local = true;
+  state.indexError = null;
+  const vectorsOk =
+    meta?.encoding === 'int8' && meta.contentHash === index.contentHash;
+  state.vectorMeta = vectorsOk ? meta : null;
+  state.vectors = vectorsOk
+    ? decodeVectors(meta.scales, meta.vectors, meta.dims)
+    : null;
+  if (vectorsOk && state.modelState === 'absent') {
+    state.modelState = 'loading';
+    state.embedder = startEmbedder(meta.model, meta.dtype);
+    state.embedder.ready.then(
+      () => {
+        state.modelState = 'ready';
+        updateStatus();
+      },
+      () => {
+        state.modelState = 'failed';
+        updateStatus();
+      },
+    );
+  }
+  updateStatus();
+  const route = currentRoute();
+  if (
+    route.name === 'search' &&
+    route.query &&
+    document.querySelector('#results-body')
+  ) {
+    paintChrome();
+    void runSearch(route.query, route.tab);
+  } else if (route.name === 'home' || route.name === 'settings') {
+    paintChrome();
+  } else {
+    void render();
+  }
+  showToast(`Brain updated: ${index.docs.length} notes re-indexed.`);
+}
+
+if (import.meta.hot) {
+  import.meta.hot.on('brain:updated', () => {
+    void reloadLocalBrain();
+  });
+}
+
 updateStatus();
 void render();

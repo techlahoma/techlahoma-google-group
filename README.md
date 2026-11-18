@@ -108,8 +108,8 @@ browser. Closing demo for Techlahoma, GDG Tulsa and Women+ in Technology of Tuls
 
 - [App README: run it, how search works, the brain layout](apps/brain-search/README.md)
 - [One-prompt Antigravity setup](apps/brain-search/PROMPT.md)
-- [Setup for every AI app](apps/brain-search/SETUP.md) (also at `#/setup` in the running app)
-- [AI Studio demo](apps/brain-search/AI_STUDIO_PROMPT.md), [no-install artifact version](apps/brain-search/ARTIFACT_PROMPT.md), and [seed your brain from meetings](apps/brain-search/SEED_FROM_MEETINGS.md)
+- [Setup for every AI app](apps/brain-search/SETUP.md) (also at `/setup` in the running app)
+- [AI Studio](apps/brain-search/AI_STUDIO_PROMPT.md), [use your brain as memory in ChatGPT and Claude](apps/brain-search/WEB_MEMORY.md), and [seed your brain from meetings](apps/brain-search/SEED_FROM_MEETINGS.md)
 
 ### In preparation — Agent Skills with WordPress
 

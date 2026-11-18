@@ -18,7 +18,8 @@ If you can't reach any, ask the user where the brain lives. Don't guess.
 
 1. Read `index.md`. Pick the notes whose titles or folders match the question.
 2. Search all notes for the key words, names and synonyms. Include `tags` and
-   `title` lines.
+   `title` lines. If the local search page is running, it ranks by meaning:
+   `http://localhost:5173/search?q=<words>`.
 3. Open the best 3-8 notes and read them in full.
 4. Answer in plain language. After each fact, cite the note path, e.g.
    `(orgs/gdg-tulsa.md)`. Mention the note's own source URL when the user
