@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Talk dashboard · Actual Productivity with AI</title>
+<style>
+:root { --bg:#fff; --fg:#202124; --muted:#5f6368; --line:#dadce0; --blue:#1a73e8; --red:#d93025; --yellow:#f9ab00; --green:#188038; --soft:#f1f3f4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.45 Arial, Helvetica, sans-serif; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 18px 20px 40px; }
+h1 { margin: 0; font-size: 26px; }
+.sub { margin: 4px 0 0; color: var(--muted); }
+.demo-note { margin: 12px 0 0; padding: 8px 12px; border-radius: 4px; background: #fef7e0; font-size: 14px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 18px 0 8px; }
+.tile { padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fff; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.tile:hover, .tile:focus-visible { border-color: var(--blue); outline: none; box-shadow: 0 0 0 2px #d2e3fc; }
+.tile b { display: block; font-size: 40px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.tile span { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; }
+.tile.blue b { color: var(--blue); } .tile.red b { color: var(--red); } .tile.green b { color: var(--green); } .tile.yellow b { color: #b06000; }
+h2 { margin: 26px 0 6px; font-size: 19px; }
+.hint { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+th { color: var(--muted); font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.bar { display: inline-block; height: 10px; border-radius: 5px; background: var(--blue); vertical-align: middle; min-width: 4px; }
+.bar.worry { background: var(--yellow); }
+.status { font-weight: 700; } .status.yes { color: var(--green); } .status.no { color: var(--red); }
+button.link { padding: 0; border: 0; background: none; color: var(--blue); font: inherit; text-decoration: underline; cursor: pointer; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 6px 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--soft); font: inherit; cursor: pointer; }
+.chip b { margin-left: 6px; font-variant-numeric: tabular-nums; }
+.chip:hover, .chip:focus-visible { border-color: var(--blue); outline: none; }
+#evidence { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fafafa; font-size: 14.5px; }
+#evidence ol { margin: 6px 0 0; padding-left: 22px; } #evidence li { margin: 4px 0; overflow-wrap: anywhere; }
+mark { background: #fde293; padding: 0 2px; border-radius: 2px; }
+.input { margin-top: 28px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fbfbfb; }
+.input label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border: 1px solid #b6b6b6; border-radius: 4px; font: 13.5px/1.4 ui-monospace, Menlo, Consolas, monospace; resize: vertical; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+.btn { height: 34px; padding: 0 14px; border: 1px solid #b6b6b6; border-radius: 4px; background: linear-gradient(#fff, #e9e9e9); font: inherit; cursor: pointer; }
+.btn.primary { border-color: #1558b0; background: var(--blue); color: #fff; font-weight: 700; }
+#state { font-weight: 700; font-size: 14.5px; }
+.foot { margin-top: 26px; color: var(--muted); font-size: 13px; }
+@media (max-width: 600px) { .tile b { font-size: 32px; } th.hide, td.hide { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Talk dashboard</h1>
+  <p class="sub">Actual Productivity with AI · Google Developer Group Tulsa × Women+ in Technology of Tulsa · November 19, 2026</p>
+  <p class="demo-note"><b>Every number here is counted by code from the transcript below.</b> Click any number to see the lines it came from. The transcript stays in this browser.</p>
+
+  <div class="tiles" id="tiles" aria-live="polite"></div>
+
+  <h2>What you asked for, and what we have covered</h2>
+  <p class="hint">The left bar is how many of you asked for a theme when you registered. No single answer is shown.</p>
+  <table>
+    <thead><tr><th>Theme</th><th class="hide">Asked for</th><th class="num">Times said</th><th>So far</th></tr></thead>
+    <tbody id="asked"></tbody>
+  </table>
+
+  <h2>Worries you raised</h2>
+  <table>
+    <thead><tr><th>Theme</th><th class="hide">Raised by</th><th class="num">Times said</th><th>So far</th></tr></thead>
+    <tbody id="worries"></tbody>
+  </table>
+
+  <h2>Words to watch</h2>
+  <div class="chips" id="watch"></div>
+
+  <h2 id="evidence-title">Check a number</h2>
+  <div id="evidence" tabindex="-1" aria-live="polite">Click a number, a theme, or a word to list the transcript lines behind it.</div>
+
+  <section class="input" aria-labelledby="input-title">
+    <h2 id="input-title" style="margin-top:0">Transcript</h2>
+    <label for="transcript">Paste the transcript so far</label>
+    <textarea id="transcript" spellcheck="false" placeholder="Paste the talk transcript here, then press Update dashboard."></textarea>
+    <div class="row">
+      <button type="button" class="btn primary" id="update">Update dashboard</button>
+      <button type="button" class="btn" id="sample">Load the sample</button>
+      <button type="button" class="btn" id="clear">Clear</button>
+      <span id="state" role="status" aria-live="polite">No transcript yet.</span>
+    </div>
+  </section>
+
+  <p class="foot">How it counts: whole words, upper or lower case. "women" also counts "woman". "tech" does not count "technology". A theme is covered once any of its words is said. Not affiliated with Google.</p>
+</div>
+<script>
+(function () {
+  'use strict';
+  var KEY = 'talk-dashboard-transcript-v1';
+  var CONFIG = null, lines = [], text = '';
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function rx(item) { return new RegExp(item.pattern, item.caseSensitive ? 'g' : 'gi'); }
+  /** Spoken text only: drop "[18:10:02]" stamps and "Speaker:" labels so they are never counted. */
+  function spoken(line) { return line.replace(/^\s*\[[^\]]*\]\s*/, '').replace(/^[A-Z][\w .'-]{0,30}:\s+/, ''); }
+  function count(item) { var n = 0, re = rx(item); lines.forEach(function (l) { var m = l.match(re); if (m) n += m.length; }); return n; }
+  function words() { var n = 0; lines.forEach(function (l) { var m = l.match(/[A-Za-z0-9][A-Za-z0-9'’+-]*/g); if (m) n += m.length; }); return n; }
+  function minutes() {
+    var stamps = [], re = /\[(\d{1,2}):(\d{2}):(\d{2})\]/g, m;
+    while ((m = re.exec(text))) stamps.push(+m[1] * 3600 + +m[2] * 60 + +m[3]);
+    if (stamps.length < 2) return null;
+    var span = stamps[stamps.length - 1] - stamps[0]; if (span < 0) span += 86400;
+    return Math.round(span / 60);
+  }
+  function show(item, title) {
+    var re = rx(item), hits = [];
+    lines.forEach(function (l) { if (l.match(re)) hits.push(esc(l).replace(new RegExp(item.pattern, item.caseSensitive ? 'g' : 'gi'), function (w) { return '<mark>' + w + '</mark>'; })); });
+    $('evidence-title').textContent = 'Check a number: ' + title;
+    $('evidence').innerHTML = hits.length ? '<b>' + count(item) + ' in ' + hits.length + ' line' + (hits.length === 1 ? '' : 's') + '.</b><ol>' + hits.map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol>' : 'Not said yet.';
+    $('evidence').focus();
+  }
+  function tile(cls, n, label, item, title) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'tile ' + cls;
+    b.innerHTML = '<b>' + n + '</b><span>' + esc(label) + '</span>';
+    if (item) b.addEventListener('click', function () { show(item, title); });
+    else b.addEventListener('click', function () { $('evidence-title').textContent = 'Check a number: ' + label; $('evidence').textContent = title; $('evidence').focus(); });
+    return b;
+  }
+  function rows(list, target, worry) {
+    var max = Math.max.apply(null, CONFIG.asked.concat(CONFIG.worries).map(function (t) { return t.people; }));
+    $(target).innerHTML = '';
+    list.forEach(function (t) {
+      var n = count(t), tr = document.createElement('tr');
+      tr.innerHTML = '<td><button type="button" class="link">' + esc(t.label) + '</button></td><td class="hide"><span class="bar' + (worry ? ' worry' : '') + '" style="width:' + Math.round(t.people / max * 140) + 'px" title="' + t.people + ' people"></span> ' + t.people + '</td><td class="num">' + n + '</td><td><span class="status ' + (n ? 'yes">Covered' : 'no">Not yet') + '</span></td>';
+      tr.querySelector('button').addEventListener('click', function () { show(t, t.label); });
+      $(target).appendChild(tr);
+    });
+  }
+  function render() {
+    var w = words(), mins = minutes();
+    var women = CONFIG.watch[0], tech = CONFIG.watch[1];
+    var covered = CONFIG.asked.filter(function (t) { return count(t) > 0; }).length;
+    var todo = CONFIG.asked.filter(function (t) { return count(t) === 0; });
+    var tiles = $('tiles'); tiles.innerHTML = '';
+    tiles.appendChild(tile('red', count(women), 'times I said "women"', women, '"women"'));
+    tiles.appendChild(tile('blue', count(tech), 'times I said "tech"', tech, '"tech"'));
+    tiles.appendChild(tile('green', covered + ' of ' + CONFIG.asked.length, 'themes you asked for, covered', null, todo.length ? 'Still to cover: ' + todo.map(function (t) { return t.label; }).join(', ') + '.' : 'Every theme has come up at least once.'));
+    tiles.appendChild(tile('yellow', w, 'words so far', null, 'Every word in the transcript, not counting time stamps or speaker labels.'));
+    if (mins !== null) tiles.appendChild(tile('', mins, 'minutes in' + (mins > 0 ? ' · ' + Math.round(w / mins) + ' words a minute' : ''), null, 'From the first time stamp to the last one in the transcript.'));
+    rows(CONFIG.asked, 'asked', false); rows(CONFIG.worries, 'worries', true);
+    var chips = $('watch'); chips.innerHTML = '';
+    CONFIG.watch.forEach(function (k) {
+      var c = document.createElement('button'); c.type = 'button'; c.className = 'chip'; c.innerHTML = esc(k.label) + '<b>' + count(k) + '</b>';
+      c.addEventListener('click', function () { show(k, '"' + k.label + '"'); }); chips.appendChild(c);
+    });
+    $('state').textContent = text.trim() ? 'Counted ' + w + ' words from ' + lines.length + ' lines.' : 'No transcript yet.';
+  }
+  function load(value, quiet) {
+    text = String(value || '');
+    lines = text.split(/\r?\n/).map(spoken).filter(function (l) { return l.trim(); });
+    if (!quiet) { try { localStorage.setItem(KEY, text); } catch (e) {} }
+    $('transcript').value = text; render();
+    return summary();
+  }
+  function summary() {
+    var out = { words: words(), minutes: minutes(), watch: {}, asked: {}, worries: {} };
+    CONFIG.watch.forEach(function (k) { out.watch[k.label] = count(k); });
+    CONFIG.asked.forEach(function (t) { out.asked[t.label] = count(t); });
+    CONFIG.worries.forEach(function (t) { out.worries[t.label] = count(t); });
+    return out;
+  }
+  /** For an agent that can run JavaScript in the page: TalkDashboard.load(text) returns the counts. */
+  window.TalkDashboard = { load: function (t) { return load(t); }, summary: function () { return summary(); } };
+  $('update').addEventListener('click', function () { load($('transcript').value); });
+  $('clear').addEventListener('click', function () { load(''); $('evidence').textContent = 'Click a number, a theme, or a word to list the transcript lines behind it.'; });
+  $('sample').addEventListener('click', function () {
+    fetch('../sample/transcript-sample.txt').then(function (r) { return r.text(); }).then(function (t) { load(t); }, function () { $('state').textContent = 'Could not load the sample.'; });
+  });
+  fetch('../topics.json').then(function (r) { return r.json(); }).then(function (c) {
+    CONFIG = c; var saved = ''; try { saved = localStorage.getItem(KEY) || ''; } catch (e) {}
+    load(saved, true);
+  }, function () { $('state').textContent = 'Could not load topics.json.'; });
+})();
+</script>
+</body>
+</html>

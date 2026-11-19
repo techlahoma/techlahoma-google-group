@@ -1,0 +1,9 @@
+Sample transcript: made up for practice. It is not the real talk.
+
+[18:10:02] Microphone: Welcome, everybody. This is Google Developer Group Tulsa and Women+ in Technology of Tulsa, together in one room. Thank you to Women in Tech for bringing so many people.
+[18:11:15] Microphone: Tonight is about actual productivity with AI. Not hype. One task you do every week, handed off. We asked you what you want off your plate, and email came up more than anything else.
+[18:12:40] Microphone: So we start with email. I have an inbox here, a fake one, and an AI agent is going to sort it, draft the replies, and write the weekly summary. Nothing gets sent. I stay the one who presses send.
+[18:14:05] Microphone: Um, second thing you asked for was meetings. Meetings and follow-ups. Who does what by when. We will record a short meeting and turn it into action items.
+[18:15:30] Microphone: A few of you are in tech already and a lot of you are not, and that is fine. You do not need to be an engineer. Gemini runs in your browser. A Gem saves your steps so you can reuse them.
+[18:17:12] Microphone: Before we go on, a word about your data. Several of you asked how to keep it safe. Use made-up data when you practice, and check what the agent can see.
+[18:18:48] Microphone: Actually, let me show the calendar one next. Clear tomorrow's calendar, reschedule every meeting, and show me the plan before anything changes.

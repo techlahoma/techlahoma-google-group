@@ -1,0 +1,30 @@
+{
+  "note": "What the room asked for before the talk, grouped from the registration answers. Counts are how many people named the theme. No individual answer is stored here.",
+  "watch": [
+    { "label": "women", "pattern": "\\bwom[ae]n\\b" },
+    { "label": "tech", "pattern": "\\btech\\b" },
+    { "label": "AI", "pattern": "\\bA\\.?I\\.?\\b", "caseSensitive": true },
+    { "label": "Gemini", "pattern": "\\bgemini\\b" },
+    { "label": "Gem", "pattern": "\\bgems?\\b" },
+    { "label": "agent", "pattern": "\\bagents?\\b" },
+    { "label": "Google", "pattern": "\\bgoogle\\b" },
+    { "label": "Tulsa", "pattern": "\\btulsa\\b" },
+    { "label": "actually", "pattern": "\\bactually\\b" },
+    { "label": "um / uh", "pattern": "\\b(um+|uh+)\\b" }
+  ],
+  "asked": [
+    { "label": "Email", "people": 7, "pattern": "\\b(e-?mails?|inbox(es)?|gmail)\\b" },
+    { "label": "Meetings and follow-ups", "people": 4, "pattern": "\\b(meetings?|follow-?ups?|action items?|recaps?)\\b" },
+    { "label": "Weekly reports and summaries", "people": 4, "pattern": "\\b(weekly|summar(y|ies|ize|izing)|reports?)\\b" },
+    { "label": "Calendar and scheduling", "people": 3, "pattern": "\\b(calendars?|schedul\\w*|reschedul\\w*)\\b" },
+    { "label": "Tasks and to-do lists", "people": 3, "pattern": "\\b(tasks?|to-?dos?|to do lists?)\\b" },
+    { "label": "Notes", "people": 2, "pattern": "\\bnotes?\\b" },
+    { "label": "Dashboards and tracking", "people": 2, "pattern": "\\b(dashboards?|charts?|tracking|spreadsheets?)\\b" },
+    { "label": "Budgets and pricing", "people": 2, "pattern": "\\b(budget\\w*|pric(e|es|ing))\\b" },
+    { "label": "Outreach and customers", "people": 2, "pattern": "\\b(outreach|customers?|clients?|crm)\\b" }
+  ],
+  "worries": [
+    { "label": "Keeping data safe", "people": 4, "pattern": "\\b(privacy|private|secur\\w*|data)\\b" },
+    { "label": "Jobs and judgment", "people": 4, "pattern": "\\b(jobs?|judg\\w*|replac\\w*|layoffs?|laid off)\\b" }
+  ]
+}
