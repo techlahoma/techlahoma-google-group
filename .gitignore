@@ -47,3 +47,7 @@ target/
 *.log
 *.tmp
 .aider*
+
+# Talk dashboard demo: never commit a real transcript or generated output.
+demos/talk-dashboard/transcript.txt
+demos/talk-dashboard/output/

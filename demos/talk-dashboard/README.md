@@ -10,10 +10,25 @@
 | Path | What it is |
 | --- | --- |
 | `web/index.html` | The live dashboard. One file, no libraries. The transcript stays in the browser. |
+| `mcp.ts` | A local MCP server (Bun, no packages). It gives an agent seven tools and passes each call to the dashboard open in your browser. |
 | `topics.json` | Words to watch, the themes the room asked for, and their worries, each with a pattern. |
 | `sample/transcript-sample.txt` | A made-up practice transcript. It is not the real talk. |
 | `PROMPT.md` | The three prompts. |
 | `TEST.md` | The checks. |
+
+## How the agent drives it
+
+```text
+Antigravity / Claude Code / Codex
+        │  MCP over stdio
+        ▼
+  bun mcp.ts ── serves web/ on http://127.0.0.1:4820
+        │  WebSocket
+        ▼
+  the open page ── recounts, redraws, answers
+```
+
+Tools: `update_dashboard`, `load_transcript_file`, `add_to_transcript`, `get_dashboard`, `get_lines`, `add_watch_word`, `load_sample`. If no page is open when a tool is called, the server opens it. The server listens on 127.0.0.1 only and makes no outbound requests.
 
 ## Where the themes come from
 

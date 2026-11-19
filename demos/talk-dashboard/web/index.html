@@ -51,6 +51,7 @@ textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border:
 <div class="wrap">
   <h1>Talk dashboard</h1>
   <p class="sub">Actual Productivity with AI · Google Developer Group Tulsa × Women+ in Technology of Tulsa · November 19, 2026</p>
+  <p class="sub" id="bridge" role="status" aria-live="polite" hidden></p>
   <p class="demo-note"><b>Every number here is counted by code from the transcript below.</b> Click any number to see the lines it came from. The transcript stays in this browser.</p>
 
   <div class="tiles" id="tiles" aria-live="polite"></div>
@@ -93,6 +94,7 @@ textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border:
   'use strict';
   var KEY = 'talk-dashboard-transcript-v1';
   var CONFIG = null, lines = [], text = '';
+  var WATCH_KEY = 'talk-dashboard-watch-v1';
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function rx(item) { return new RegExp(item.pattern, item.caseSensitive ? 'g' : 'gi'); }
@@ -164,8 +166,63 @@ textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border:
     CONFIG.worries.forEach(function (t) { out.worries[t.label] = count(t); });
     return out;
   }
+  // ---- tools for an agent (through the local MCP server, or JavaScript in the page)
+  function item(label) {
+    var want = String(label || '').trim().toLowerCase(), all = CONFIG.watch.concat(CONFIG.asked, CONFIG.worries);
+    for (var i = 0; i < all.length; i++) if (all[i].label.toLowerCase() === want) return all[i];
+    throw new Error('No number is called "' + label + '". Use a label from get_dashboard.');
+  }
+  function addWatch(word, quiet) {
+    var w = String(word || '').trim().replace(/\s+/g, ' ');
+    if (!w || w.length > 40) throw new Error('Pass one word or short phrase.');
+    var exists = CONFIG.watch.some(function (k) { return k.label.toLowerCase() === w.toLowerCase(); });
+    if (!exists) {
+      CONFIG.watch.push({ label: w, pattern: '\\b' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+') + '\\b', added: true });
+      if (!quiet) { try { localStorage.setItem(WATCH_KEY, JSON.stringify(CONFIG.watch.filter(function (k) { return k.added; }).map(function (k) { return k.label; }))); } catch (e) {} }
+    }
+    return w;
+  }
+  var agentTools = {
+    update_dashboard: function (a) { if (typeof a.transcript !== 'string') throw new Error('Pass "transcript": the text.'); return load(a.transcript); },
+    add_to_transcript: function (a) { if (typeof a.text !== 'string' || !a.text.trim()) throw new Error('Pass "text".'); return load(text + (text && !/\n$/.test(text) ? '\n' : '') + a.text); },
+    get_dashboard: function () { return summary(); },
+    get_lines: function (a) {
+      var it = item(a.label), re = rx(it), hits = lines.filter(function (l) { return l.match(re); });
+      show(it, it.label);
+      return { label: it.label, count: count(it), lines: hits.slice(0, 30), more: Math.max(0, hits.length - 30) };
+    },
+    add_watch_word: function (a) { var w = addWatch(a.word); render(); return { watching: w, count: count(item(w)) }; },
+    load_sample: function () {
+      return fetch('../sample/transcript-sample.txt').then(function (r) { if (!r.ok) throw new Error('Could not load the sample.'); return r.text(); }).then(function (t) { return load(t); });
+    },
+  };
+  function runTool(name, args) {
+    return new Promise(function (resolve) {
+      if (!CONFIG) throw new Error('The dashboard is still loading. Try again.');
+      if (!agentTools[name]) throw new Error('Unknown tool: ' + name);
+      resolve(agentTools[name](args || {}));
+    });
+  }
+  function setBridge(msg) { var el = $('bridge'); el.hidden = !msg; el.textContent = msg || ''; }
+  function connect() {
+    var local = location.protocol === 'http:' && (location.hostname === '127.0.0.1' || location.hostname === 'localhost');
+    if (!local) return;
+    var ws, opened = false;
+    try { ws = new WebSocket('ws://' + location.host + '/__talk/ws'); } catch (e) { setTimeout(connect, 1000); return; }
+    ws.onopen = function () { opened = true; setBridge('● Agent bridge connected: your agent can update this page.'); };
+    ws.onmessage = function (event) {
+      var msg; try { msg = JSON.parse(event.data); } catch (e) { return; }
+      if (!msg.id || !msg.tool) return;
+      runTool(msg.tool, msg.args).then(
+        function (result) { ws.send(JSON.stringify({ id: msg.id, ok: true, result: result })); },
+        function (error) { ws.send(JSON.stringify({ id: msg.id, ok: false, error: String((error && error.message) || error) })); }
+      );
+    };
+    ws.onclose = function () { setBridge(opened ? '○ Waiting for the local server…' : ''); setTimeout(connect, 1000); };
+  }
+
   /** For an agent that can run JavaScript in the page: TalkDashboard.load(text) returns the counts. */
-  window.TalkDashboard = { load: function (t) { return load(t); }, summary: function () { return summary(); } };
+  window.TalkDashboard = { load: function (t) { return load(t); }, summary: function () { return summary(); }, run: runTool };
   $('update').addEventListener('click', function () { load($('transcript').value); });
   $('clear').addEventListener('click', function () { load(''); $('evidence').textContent = 'Click a number, a theme, or a word to list the transcript lines behind it.'; });
   $('sample').addEventListener('click', function () {
@@ -173,7 +230,9 @@ textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border:
   });
   fetch('../topics.json').then(function (r) { return r.json(); }).then(function (c) {
     CONFIG = c; var saved = ''; try { saved = localStorage.getItem(KEY) || ''; } catch (e) {}
+    try { JSON.parse(localStorage.getItem(WATCH_KEY) || '[]').forEach(function (w) { addWatch(w, true); }); } catch (e) {}
     load(saved, true);
+    connect();
   }, function () { $('state').textContent = 'Could not load topics.json.'; });
 })();
 </script>
