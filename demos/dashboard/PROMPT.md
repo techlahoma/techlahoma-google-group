@@ -5,6 +5,10 @@
 - `Why it matters:` A wrong number on a good-looking page is the failure people miss. Each step here gives a person, not the AI, something to compare.
 - `Go deeper:` [README](README.md) · [answer key and checks](TEST.md) · [reference output](expected/) · [Google Sheets answer key](#the-same-numbers-in-google-sheets)
 
+## First example: a dashboard of this talk, built live
+
+Start the dashboard part of the workshop with the talk itself. Antigravity takes the transcript so far and updates a dashboard open in the browser: how often the speaker said "women" or "tech", and which themes the room asked for have come up. The prompts are in [../talk-dashboard/PROMPT.md](../talk-dashboard/PROMPT.md). The ticket export below is the second example.
+
 ## Step 1: write down three numbers (no AI)
 
 Open `sample/tickets.csv` in Google Sheets (File → Import → Upload). Write these on paper or a sticky note.
