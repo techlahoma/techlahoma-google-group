@@ -1,7 +1,7 @@
 # Room Pulse
 
 - `Tease:` A generated app workspace ready for one focused vertical slice.
-- `Lede:` This app lives at `apps/room-pulse` and inherits the Techlahoma Google Apps Starter's shared toolchain and agent contract.
+- `Lede:` This app lives at `apps/room-pulse` and inherits the Techlahoma Google Group's shared toolchain and agent contract.
 - `Why it matters:` It can be built, tested, and launched independently without changing another demo app.
 - `Go deeper:` Run `bun run dev` here, or `bun run --cwd apps/room-pulse dev` from the repository root.
 
@@ -32,8 +32,8 @@ account, or imply that a local demo is a public multi-device service.
 
 # Workspace
 
-Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-apps-starter.
-Confirm its root package is techlahoma-google-apps-starter; do not clone another repository.
+Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-group.
+Confirm its root package is techlahoma-google-group; do not clone another repository.
 Read the root and apps instructions and use the embedded build-and-launch-demo skill.
 
 Create this artifact as a new apps/room-pulse workspace using the root app:create plan

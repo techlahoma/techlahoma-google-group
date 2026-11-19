@@ -9,7 +9,7 @@ Complete the requested local demo in one uninterrupted pass. Do not turn the req
 
 ## Work autonomously
 
-1. Confirm the current working directory is the Techlahoma Google Apps Starter root. Read `AGENTS.md`, `PROJECT.md`, `apps/AGENTS.md`, the active `.starter/addenda/`, and relevant scripts before editing. If Git or the exact Bun version is missing, use the `bootstrap-workspace` skill rather than guessing at WSL, Homebrew, or another package manager.
+1. Confirm the current working directory is the Techlahoma Google Group root. Read `AGENTS.md`, `PROJECT.md`, `apps/AGENTS.md`, the active `.starter/addenda/`, and relevant scripts before editing. If Git or the exact Bun version is missing, use the `bootstrap-workspace` skill rather than guessing at WSL, Homebrew, or another package manager.
 2. Treat the user's prompt as the acceptance contract. Resolve minor ambiguity with the smallest reversible interpretation and state it in the final report.
 3. Run `bun run setup:doctor`, install the locked root dependencies when needed, and run `bun run verify` before editing. Install the pinned browser with `bun run browser:install` only when browser proof requires it. Record failures without weakening checks.
 4. Choose a short lowercase app slug from the requested artifact. If `apps/<slug>` exists, add the first unused numeric suffix; never overwrite an existing app.

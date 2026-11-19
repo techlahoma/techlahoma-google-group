@@ -136,7 +136,7 @@ function generatedFiles(sourcePackage, hasAiStudioPrompt) {
     include: ['src'],
   };
   const sourceUrl =
-    'https://github.com/techlahoma/techlahoma-google-apps-starter/tree/feat/wordpress-playground-workshop/apps/wordpress-playground';
+    'https://github.com/techlahoma/techlahoma-google-group/tree/feat/wordpress-playground-workshop/apps/wordpress-playground';
   const furtherReading = hasAiStudioPrompt
     ? '[AI Studio instructions](AI_STUDIO_PROMPT.md) and the'
     : 'The';

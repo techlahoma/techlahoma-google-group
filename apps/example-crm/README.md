@@ -1,7 +1,7 @@
 # Example CRM — Fictional Demo
 
 - `Tease:` A generated app workspace ready for one focused vertical slice.
-- `Lede:` This app lives at `apps/example-crm` and inherits the Techlahoma Google Apps Starter's shared toolchain and agent contract.
+- `Lede:` This app lives at `apps/example-crm` and inherits the Techlahoma Google Group's shared toolchain and agent contract.
 - `Why it matters:` It can be built, tested, and launched independently without changing another demo app.
 - `Go deeper:` Run `bun run dev` here, or `bun run --cwd apps/example-crm dev` from the repository root.
 
@@ -32,8 +32,8 @@ cloud resources, authenticate an external account, or use real customer data.
 
 # Workspace
 
-Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-apps-starter.
-Confirm its root package is techlahoma-google-apps-starter; do not clone another repository.
+Run inside an existing clone of https://github.com/techlahoma/techlahoma-google-group.
+Confirm its root package is techlahoma-google-group; do not clone another repository.
 Read its AGENTS.md, PROJECT.md, apps/AGENTS.md, active starter addenda, and embedded
 build-and-launch-demo skill. Follow that skill for the rest of this request.
 

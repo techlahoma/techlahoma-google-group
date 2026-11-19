@@ -1,7 +1,7 @@
 # Numeronym Generator
 
 - `Tease:` A generated app workspace ready for one focused vertical slice.
-- `Lede:` This app lives at `apps/numeronym-generator` and inherits the Techlahoma Google Apps Starter's shared toolchain and agent contract.
+- `Lede:` This app lives at `apps/numeronym-generator` and inherits the Techlahoma Google Group's shared toolchain and agent contract.
 - `Why it matters:` It can be built, tested, and launched independently without changing another demo app.
 - `Go deeper:` Run `bun run dev` here, or `bun run --cwd apps/numeronym-generator dev` from the repository root.
 
@@ -27,7 +27,7 @@ The original generation prompt was not preserved in Git or the event prompt libr
 
 ```text
 Create a new app workspace named numeronym-generator titled "Numeronym Generator"
-inside the Techlahoma Google Apps Starter. Preserve the root toolchain and app boundary.
+inside the Techlahoma Google Group. Preserve the root toolchain and app boundary.
 
 Build a polished, static TypeScript numeronym utility. It should transform individual
 words such as "kubernetes" into "k8s" and "accessibility" into "a11y", and collapse a

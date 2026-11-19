@@ -1,0 +1,26 @@
+{
+  "name": "@techlahoma/brain-search",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "index": "bun scripts/index-brain.ts",
+    "index:check": "bun scripts/index-brain.ts --check",
+    "test": "bun test src scripts",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck && bun run test && bun run build",
+    "readme:apply": "bun scripts/sync-readme.ts",
+    "readme:check": "bun scripts/sync-readme.ts --check"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.14",
+    "typescript": "5.9.3",
+    "vite": "8.0.16"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0"
+  }
+}

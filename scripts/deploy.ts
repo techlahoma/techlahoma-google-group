@@ -37,7 +37,7 @@ import {
 } from './deploy-tui';
 import {deriveSiteId, makeConfig} from './google-cloud-lib';
 
-const HELP = `Techlahoma Google Apps Starter simplified Firebase deployment CLI
+const HELP = `Techlahoma Google Group simplified Firebase deployment CLI
 
 Usage:
   bun run deploy                         Interactive terminal app selector & guided setup

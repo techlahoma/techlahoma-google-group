@@ -23,7 +23,7 @@ const ROOT_DIR = resolve(import.meta.dir, '..');
 const ROOT_FIREBASE_BINARY = './node_modules/.bin/firebase';
 const APP_FIREBASE_BINARY = '../../node_modules/.bin/firebase';
 
-const HELP = `Techlahoma Google Apps Starter shared cloud lifecycle
+const HELP = `Techlahoma Google Group shared cloud lifecycle
 
 Notice:
   For routine app deployments, use the simplified command:

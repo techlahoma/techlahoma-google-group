@@ -48,7 +48,7 @@ If any box remains false, return `INCOMPLETE` prominently and name the missing p
 
 # Workspace and execution order
 
-Work in the existing `techlahoma-google-apps-starter` repository. Read `AGENTS.md`,
+Work in the existing `techlahoma-google-group` repository. Read `AGENTS.md`,
 `PROJECT.md`, `apps/AGENTS.md`, active `.starter/addenda/`, and the embedded
 `build-and-launch-demo` skill. Use already-installed frontend UI, test-driven
 development, browser-testing, review, and simplification skills without their
@@ -297,7 +297,7 @@ rg -q 'completeTask' apps/<slug>/src/repository.test.ts
 rg -q 'addNote' apps/<slug>/src/repository.test.ts
 ! rg -n 'structuredClone|state\s*=\s*\{\s*rows|@ts-(nocheck|ignore)' \
   apps/<slug>/src
-! rg -n 'readyMessage\(|is ready\.|__APP_(SLUG|TITLE)__|SCAFFOLD_MARKER|scaffold placeholder test|Your new app workspace is ready|Techlahoma Google Apps Starter' \
+! rg -n 'readyMessage\(|is ready\.|__APP_(SLUG|TITLE)__|SCAFFOLD_MARKER|scaffold placeholder test|Your new app workspace is ready|Techlahoma Google Group' \
   apps/<slug>/src apps/<slug>/e2e apps/<slug>/index.html
 test "$(rg -o 'id="app"' apps/<slug>/index.html | wc -l | tr -d ' ')" = 1
 awk 'length($0) > 240 {print FNR ":" FILENAME; bad=1} END {exit bad}' \

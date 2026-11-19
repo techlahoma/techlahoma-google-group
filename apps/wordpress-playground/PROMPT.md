@@ -9,7 +9,7 @@
 
 ```text
 Finish and rehearse the WordPress Agent Workshop in the existing
-techlahoma/techlahoma-google-apps-starter monorepo, starting from branch
+techlahoma/techlahoma-google-group monorepo, starting from branch
 feat/wordpress-playground-workshop. Preserve other apps and unrelated changes.
 
 Read AGENTS.md, PROJECT.md, apps/AGENTS.md, the active .starter/addenda, and:

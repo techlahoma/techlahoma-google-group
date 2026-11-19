@@ -23,7 +23,7 @@ The project default site returned HTTP 200, but it is protected, serves unrelate
 Welcome was not generated as an independent one-shot demo. Git history shows that the starter interface moved from the repository root into `apps/welcome` in commit `fb5528f`, then received its Techlahoma and GDG Tulsa identity in commit `8d72cb3`. The following maintenance prompt is reconstructed from that provenance; it is not a verbatim historical prompt.
 
 ```text
-Update the Techlahoma Google Apps Starter's existing Welcome app without creating a
+Update the Techlahoma Google Group's existing Welcome app without creating a
 new workspace or changing another demo.
 
 Keep it a small, static reference app that proves the shared Bun, strict TypeScript,

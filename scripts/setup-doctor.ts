@@ -230,7 +230,7 @@ export async function inspectSetup(
       'path-length',
       'warning',
       `the repository path is ${ROOT_DIR.length} characters long`,
-      'Prefer a short user-owned path such as C:\\src\\techlahoma-google-apps-starter.',
+      'Prefer a short user-owned path such as C:\\src\\techlahoma-google-group.',
     );
   }
 

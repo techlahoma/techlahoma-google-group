@@ -118,7 +118,7 @@ function RebuildPrompt({demo}: {demo: Demo}) {
         happened. Fork it first if you want to save changes to your own GitHub.
       </p>
       <p className="link-row">
-        <a href="https://github.com/techlahoma/techlahoma-google-apps-starter">
+        <a href="https://github.com/techlahoma/techlahoma-google-group">
           GitHub repository <ArrowTopRightOnSquareIcon aria-hidden="true" />
         </a>
         <a href="https://samcarltoncreative.notion.site/GDG-Tulsa-Model-Workshop-Kit-3dc012b9b020817e93b7dac0365ca614">
