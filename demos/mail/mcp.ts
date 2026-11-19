@@ -13,6 +13,8 @@
 // Run by an MCP client:   bun /absolute/path/to/demos/mail/mcp.ts
 // Run by hand (page only): bun demos/mail/mcp.ts --serve
 // Options: --port=4810 (or MAIL_PORT), --serve (keep running without an MCP client).
+// If a tool is called while no page is open, the server opens the inbox in your browser.
+// MAIL_NO_OPEN=1 turns that off.
 
 import { existsSync } from 'node:fs';
 import { join, normalize, sep } from 'node:path';
@@ -27,6 +29,7 @@ const SERVE_ONLY = argv.includes('--serve');
 const SERVER_NAME = 'oogle-mail-demo';
 const CALL_TIMEOUT_MS = 20_000;
 const PAGE_WAIT_MS = 2_500;
+const PAGE_OPEN_WAIT_MS = 15_000; // after this server opens the browser itself
 
 const log = (...parts: unknown[]) => console.error('[mail]', ...parts);
 
@@ -166,8 +169,34 @@ function callPage(tool: string, args: unknown, silent = false): Promise<unknown>
   });
 }
 
+let lastOpen = 0;
+
+/** No page is connected: open the inbox in the system browser (at most once every 30 seconds). */
+function openBrowser(): boolean {
+  if (process.env.MAIL_NO_OPEN === '1' || Date.now() - lastOpen < 30_000) return false;
+  lastOpen = Date.now();
+  const target = url();
+  const cmd = process.env.MAIL_OPEN_CMD
+    ? [process.env.MAIL_OPEN_CMD, target]
+    : process.platform === 'darwin'
+      ? ['open', target]
+      : process.platform === 'win32'
+        ? ['cmd', '/c', 'start', '', target]
+        : ['xdg-open', target];
+  try {
+    Bun.spawn(cmd, { stdin: 'ignore', stdout: 'ignore', stderr: 'ignore' });
+    log('No page was open, so I opened', target);
+    return true;
+  } catch (error) {
+    log('Could not open a browser:', (error as Error).message);
+    return false;
+  }
+}
+
 async function waitForPage(): Promise<void> {
-  const until = Date.now() + PAGE_WAIT_MS;
+  if (pages.length > 0) return;
+  const opened = openBrowser();
+  const until = Date.now() + (opened ? PAGE_OPEN_WAIT_MS : PAGE_WAIT_MS);
   while (pages.length === 0 && Date.now() < until) await Bun.sleep(100);
 }
 

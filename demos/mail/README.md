@@ -11,7 +11,7 @@ It pairs with the Brain Search demo ([oogle.web.app](https://oogle.web.app/)): s
 
 Paste the first prompt in [PROMPT.md](PROMPT.md) into an agent that has its own browser, such as Google Antigravity. It opens <https://wit-demos.web.app/mail/web/> and works the inbox through the **Agent console** at the bottom of the page: one tool call as JSON, **Run tool**, read the result. The mailbox lives in that browser tab. An agent that can run JavaScript in the page can call `await OogleMail.run("list_emails", {})` instead.
 
-The local server below is now optional. Use it when your agent has no browser, or to run `check.ts`.
+The local server below also works and is the path with the `mail` MCP tools. One paste of Prompt 0 clones this repository, connects the server, and the inbox then opens in your own browser by itself when the agent first uses a tool.
 
 ## Try it in 5 minutes
 
