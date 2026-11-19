@@ -111,6 +111,8 @@ browser. Closing demo for Techlahoma, GDG Tulsa and Women+ in Technology of Tuls
 - **Start here:** the [workshop page in Notion](https://sam.lc/wit), with every demo, prompt, and link, plus a QR
   code to share it with the person next to you
 - [Live demo at oogle.web.app](https://oogle.web.app/) and its [setup page](https://oogle.web.app/setup)
+- [Every demo with its prompts at wit-demos.web.app](https://wit-demos.web.app/): email, meetings, memories, dashboards.
+  Source in [demos/](demos/)
 - [Event page](https://luma.com/b7eptsqo)
 
 - [App README: run it, how search works, the brain layout](apps/brain-search/README.md)
