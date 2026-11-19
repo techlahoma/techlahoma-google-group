@@ -23,7 +23,7 @@ export interface CommandPlan {
 }
 
 const PROJECT_ID_PATTERN = /^[a-z][a-z0-9-]{4,28}[a-z0-9]$/;
-const SITE_ID_PATTERN = /^[a-z0-9][a-z0-9-]{2,28}[a-z0-9]$/;
+const SITE_ID_PATTERN = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
 const REGION_PATTERN = /^[a-z]+-[a-z]+[0-9]$/;
 const ENVIRONMENTS = new Set<Environment>([
   'development',
@@ -34,7 +34,7 @@ const ENVIRONMENTS = new Set<Environment>([
 export function validateSiteId(siteId: string): string {
   if (typeof siteId !== 'string' || !SITE_ID_PATTERN.test(siteId)) {
     throw new Error(
-      `site_id "${siteId}" must be 4-30 lowercase letters, digits, or hyphens; start and end with a letter or digit`,
+      `site_id "${siteId}" must be 3-30 lowercase letters, digits, or hyphens; start and end with a letter or digit`,
     );
   }
   return siteId;

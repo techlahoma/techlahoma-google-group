@@ -85,6 +85,7 @@ describe('site ID constraints and derivation', () => {
 
   test('validates valid and invalid site IDs', () => {
     expect(validateSiteId('valid-site-123')).toBe('valid-site-123');
+    expect(validateSiteId('n7m')).toBe('n7m');
     expect(() => validateSiteId('ab')).toThrow('site_id');
     expect(() => validateSiteId('Invalid-Capital')).toThrow('site_id');
     expect(() => validateSiteId('trailing-dash-')).toThrow('site_id');
