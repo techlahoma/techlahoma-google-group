@@ -58,23 +58,23 @@
   },
   "skills": {
     "setup-matt-pocock-skills": {
-      "source": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "source": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/engineering/setup-matt-pocock-skills"
     },
     "to-spec": {
-      "source": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "source": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/engineering/to-spec"
     },
     "to-tickets": {
-      "source": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "source": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/engineering/to-tickets"
     },
     "handoff": {
-      "source": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "source": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/productivity/handoff"
     },
     "writing-for-agents": {
-      "source": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "source": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/productivity/writing-for-agents"
     }
   },

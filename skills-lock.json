@@ -2,42 +2,42 @@
   "lockfileVersion": 1,
   "skills": {
     "handoff": {
-      "spec": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "spec": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "resolved": "https://github.com/mattpocock/skills.git",
-      "ref": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
-      "commit": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "ref": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "commit": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/productivity/handoff",
       "integrity": "sha256-T2F8zx+BXAW+wmt4LGnkbuhOPUfAZTIEHpXnQseNECw="
     },
     "setup-matt-pocock-skills": {
-      "spec": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "spec": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "resolved": "https://github.com/mattpocock/skills.git",
-      "ref": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
-      "commit": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "ref": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "commit": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/engineering/setup-matt-pocock-skills",
-      "integrity": "sha256-z+HCSLFo15HUAgPLKDKk0c9uF7PWGcxDIjiZ8b/KV0A="
+      "integrity": "sha256-4jAB3yT0UHxSdbIUT+2SaOBGjH1h1kOnj4M0Xewt+oM="
     },
     "to-spec": {
-      "spec": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "spec": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "resolved": "https://github.com/mattpocock/skills.git",
-      "ref": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
-      "commit": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "ref": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "commit": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/engineering/to-spec",
       "integrity": "sha256-+AQRRuwWeMMjBPRsnembc6S12t9mTjWoEkvkfEz+MZY="
     },
     "to-tickets": {
-      "spec": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "spec": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "resolved": "https://github.com/mattpocock/skills.git",
-      "ref": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
-      "commit": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "ref": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "commit": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/engineering/to-tickets",
       "integrity": "sha256-908ZTdkcjz7XRFJno/0mSAOYpLrrPCobEAjEvwkQVyU="
     },
     "writing-for-agents": {
-      "spec": "mattpocock/skills#5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "spec": "mattpocock/skills#4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "resolved": "https://github.com/mattpocock/skills.git",
-      "ref": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
-      "commit": "5beb35b040e3de97e54fa9e386d7e42d15c295c2",
+      "ref": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "commit": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
       "path": "skills/productivity/writing-for-agents",
       "integrity": "sha256-AHESSpI1WUk7yJJKkPuHvOsEjTGtLOeF+kKB18UGv6c="
     }
