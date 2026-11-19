@@ -113,6 +113,8 @@ browser. Closing demo for Techlahoma, GDG Tulsa and Women+ in Technology of Tuls
 - [Live demo at oogle.web.app](https://oogle.web.app/) and its [setup page](https://oogle.web.app/setup)
 - [Every demo with its prompts at wit-demos.web.app](https://wit-demos.web.app/): email, meetings, memories, dashboards.
   Source in [demos/](demos/)
+- [Dashboard skill to install](demos/dashboard/README.md#install-the-skill): `checkable-dashboard`, for dashboards whose
+  numbers you can check
 - [Event page](https://luma.com/b7eptsqo)
 
 - [App README: run it, how search works, the brain layout](apps/brain-search/README.md)

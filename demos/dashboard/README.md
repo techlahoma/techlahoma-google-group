@@ -85,6 +85,22 @@ Our lazy run on Gemini Flash is saved as [expected/lazy-dashboard.png](expected/
 
 **Remove sensitive data first:** names, emails, customer or donor details, salaries, account numbers. **Check your employer's AI policy** before work data goes into a personal AI account. If you are not sure, practice on a made-up copy with the same columns.
 
+## Install the skill
+
+The method on this page is packaged as an agent skill, [checkable-dashboard](../../.agents/skills/checkable-dashboard/SKILL.md). It makes the AI write the brief, profile the data, compute every number from the rows, and hand you three checks to run.
+
+- **Antigravity, Claude Code, or Codex.** In a terminal, inside your project folder (needs [Node.js](https://nodejs.org/)):
+
+  ```sh
+  npx skills add techlahoma/techlahoma-google-group --skill checkable-dashboard -a antigravity -a claude-code -a codex
+  ```
+
+  It copies the skill to `.agents/skills/checkable-dashboard/`, where Antigravity and Codex read it, and links it into `.claude/skills/` for Claude Code. Leave off the `-a` flags to pick your tools from a list.
+- **No terminal.** Copy the folder `.agents/skills/checkable-dashboard/` from this repository into `.agents/skills/` in your project (`.claude/skills/` for Claude Code). If you opened this repository itself in Antigravity or Codex, the skill is already there.
+- **A browser chat (Gemini, ChatGPT, Claude).** Open the [raw skill file](https://raw.githubusercontent.com/techlahoma/techlahoma-google-group/main/.agents/skills/checkable-dashboard/SKILL.md), select all, copy, and paste it into a new chat under the line "Follow these instructions for this whole chat." Then send your request.
+
+To use it, ask: "Use the checkable-dashboard skill to build a dashboard from this export." Start with made-up data, such as [sample/tickets.csv](sample/tickets.csv).
+
 ## Credits
 
 The method here comes from people who build and teach dashboards.
