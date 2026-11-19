@@ -150,10 +150,25 @@ export class PlayerViewController {
     }
   }
 
+  private hasValidRoomState = false;
+  private missingRoomTimer: ReturnType<typeof setTimeout> | null = null;
+
   private onRoomStateUpdate(state: RoomState | null): void {
     if (!state) {
-      this.showStatusError('Room does not exist or host ended session.');
+      if (!this.hasValidRoomState && !this.missingRoomTimer) {
+        this.missingRoomTimer = setTimeout(() => {
+          if (!this.hasValidRoomState) {
+            this.showStatusError('Room does not exist or host ended session.');
+          }
+        }, 1500);
+      }
       return;
+    }
+
+    this.hasValidRoomState = true;
+    if (this.missingRoomTimer) {
+      clearTimeout(this.missingRoomTimer);
+      this.missingRoomTimer = null;
     }
 
     const claimedEmojis = new Set(

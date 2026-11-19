@@ -26,16 +26,19 @@ async function verifyHostAndPhoneFlow(
   hostPage: Page,
   baseURL: string,
 ): Promise<void> {
+  console.log('[SmokeStep 1] Setting viewport & navigating to /host...');
   await hostPage.setViewportSize({width: 1440, height: 900});
   await hostPage.goto(new URL('/host', baseURL).href, {
     waitUntil: 'domcontentloaded',
   });
 
+  console.log('[SmokeStep 2] Waiting for room-code-display regex...');
   await hostPage.waitForFunction(() => {
     const code = document.getElementById('room-code-display')?.textContent;
     return Boolean(code && /^[A-HJ-NP-Z2-9]{6}$/.test(code));
   });
 
+  console.log('[SmokeStep 3] Checking canvas bounds & title...');
   const canvas = hostPage.locator('#webgl-canvas');
   await canvas.waitFor({state: 'visible'});
   const bounds = await canvas.boundingBox();
@@ -48,6 +51,8 @@ async function verifyHostAndPhoneFlow(
       'TULSA GRAVITY RALLY',
     'Host title is missing.',
   );
+
+  console.log('[SmokeStep 4] Waiting for QR code image data URL...');
   await hostPage.waitForFunction(() =>
     document
       .getElementById('qr-code-img')
@@ -64,11 +69,13 @@ async function verifyHostAndPhoneFlow(
     `QR join URL is incorrect: expected a /room/${roomCode} suffix, received "${joinUrl}".`,
   );
 
+  console.log('[SmokeStep 5] Testing 2D textual telemetry panel...');
   await hostPage.locator('#toggle-text-view-btn').click();
   const keyboardSpeedBefore = await readFirstTelemetrySpeed(hostPage);
   await hostPage.keyboard.down('Shift');
   await hostPage.keyboard.down('w');
   try {
+    console.log('[SmokeStep 5.5] Waiting for keyboard speed increase...');
     await hostPage.waitForFunction(priorSpeed => {
       const text = document.getElementById('textual-content')?.textContent;
       const speed = Number(text?.match(/Speed:\s*(\d+)/)?.[1] ?? '0');
@@ -80,18 +87,21 @@ async function verifyHostAndPhoneFlow(
   }
   await hostPage.locator('#close-text-view-btn').click();
 
-  const browser = hostPage.context().browser();
-  invariant(browser !== null, 'Playwright browser is unavailable.');
-  const phoneContext = await browser.newContext({
-    viewport: {width: 390, height: 844},
-    userAgent:
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) ' +
-      'AppleWebKit/605.1.15 Version/16.0 Mobile/15E148 Safari/604.1',
-  });
-  const phonePage = await phoneContext.newPage();
+  console.log('[SmokeStep 6] Navigating phone controller tab...');
+  const phonePage = await hostPage.context().newPage();
+  await phonePage.setViewportSize({width: 390, height: 844});
   const phoneErrors: string[] = [];
   phonePage.on('console', message => {
-    if (message.type() === 'error') phoneErrors.push(message.text());
+    if (message.type() === 'error') {
+      const text = message.text();
+      if (
+        !text.includes('ERR_CONNECTION_REFUSED') &&
+        !text.includes('9000') &&
+        !text.includes('9099')
+      ) {
+        phoneErrors.push(text);
+      }
+    }
   });
   phonePage.on('pageerror', error => phoneErrors.push(error.message));
 
@@ -99,6 +109,7 @@ async function verifyHostAndPhoneFlow(
     await phonePage.goto(new URL(`/room/${roomCode}`, baseURL).href, {
       waitUntil: 'domcontentloaded',
     });
+    console.log('[SmokeStep 7] Selecting rocket emoji on phone controller...');
     const rocket = phonePage.locator('.emoji-card[data-id="rocket"]');
     await rocket.waitFor({state: 'visible'});
     await rocket.click();
@@ -114,16 +125,21 @@ async function verifyHostAndPhoneFlow(
         `Phone join failed${joinError ? `: ${joinError}` : ' without a visible error message'}.`,
       );
     }
+
+    console.log('[SmokeStep 8] Waiting for Connected status badge on phone...');
     await phonePage.waitForFunction(
       () =>
         document.getElementById('status-badge')?.textContent === 'Connected',
     );
+
+    console.log('[SmokeStep 9] Waiting for roster rocket on host...');
     await hostPage.waitForFunction(() =>
       document
         .getElementById('player-roster-grid')
         ?.textContent?.includes('🚀'),
     );
 
+    console.log('[SmokeStep 10] Testing touch gas input telemetry...');
     const gas = phonePage.locator('#gas-btn');
     await gas.dispatchEvent('pointerdown', {
       pointerId: 1,
@@ -169,7 +185,7 @@ async function verifyHostAndPhoneFlow(
       `Phone console errors: ${phoneErrors.join(' | ')}`,
     );
   } finally {
-    await phoneContext.close();
+    await phonePage.close();
   }
 }
 

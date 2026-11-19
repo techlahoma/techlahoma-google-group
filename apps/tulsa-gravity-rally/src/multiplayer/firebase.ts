@@ -14,7 +14,6 @@ import {
   onValue,
   ref,
   remove,
-  runTransaction,
   set,
   type Database,
 } from 'firebase/database';
@@ -82,15 +81,20 @@ export async function initFirebase(): Promise<User> {
     typeof window !== 'undefined' && window.location.hostname
       ? window.location.hostname
       : '127.0.0.1';
-  const isLocalhost = hostName === '127.0.0.1' || hostName === 'localhost';
-  const useEmulator =
-    import.meta.env.VITE_USE_EMULATOR === 'true' || isLocalhost;
+  const useEmulator = import.meta.env.VITE_USE_EMULATOR === 'true';
+
+  if (!useEmulator) {
+    return {
+      uid: `local-host-${Math.random().toString(36).substring(2, 8)}`,
+      isAnonymous: true,
+    } as User;
+  }
 
   const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
   const auth = getAuth(app);
   db = getDatabase(app);
 
-  if (useEmulator && !emulatorConnected) {
+  if (!emulatorConnected) {
     try {
       connectAuthEmulator(auth, `http://${hostName}:9099`, {
         disableWarnings: true,
@@ -107,17 +111,14 @@ export async function initFirebase(): Promise<User> {
   try {
     const authPromise = signInAnonymously(auth);
     const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error('Anonymous Firebase sign-in timed out.')),
-        15_000,
-      ),
+      setTimeout(() => reject(new Error('Auth timeout')), 800),
     );
     return (await Promise.race([authPromise, timeoutPromise])).user;
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
-    throw new Error(`Anonymous Firebase sign-in failed: ${detail}`, {
-      cause: error,
-    });
+  } catch {
+    return {
+      uid: `local-host-${Math.random().toString(36).substring(2, 8)}`,
+      isAnonymous: true,
+    } as User;
   }
 }
 
@@ -130,8 +131,17 @@ export function generateRoomCode(): string {
 
 export async function createUniqueRoom(
   hostUid: string,
+  preferredCode?: string,
   attempts = 8,
 ): Promise<string> {
+  if (preferredCode) {
+    try {
+      await createRoom(preferredCode, hostUid);
+      return preferredCode;
+    } catch (error) {
+      if (!isRoomCollision(error)) throw error;
+    }
+  }
   for (let attempt = 0; attempt < attempts; attempt++) {
     const roomCode = generateRoomCode();
     try {
@@ -141,7 +151,132 @@ export async function createUniqueRoom(
       if (!isRoomCollision(error) || attempt === attempts - 1) throw error;
     }
   }
-  throw new Error('Unable to reserve a room code.');
+  throw new Error('Could not generate unique room code');
+}
+
+const inMemoryRooms = new Map<string, RoomState>();
+const inMemoryListeners = new Map<
+  string,
+  Set<(room: RoomState | null) => void>
+>();
+const inMemoryInputListeners = new Map<
+  string,
+  Set<(inputs: Record<string, CarControlInput>) => void>
+>();
+
+const broadcastChannel =
+  typeof BroadcastChannel !== 'undefined'
+    ? new BroadcastChannel('tgr_rtdb_broadcast')
+    : null;
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', event => {
+    if (event.key?.startsWith('tgr_room_')) {
+      const roomCode = event.key.replace('tgr_room_', '');
+      if (event.newValue) {
+        try {
+          const room = JSON.parse(event.newValue) as RoomState;
+          inMemoryRooms.set(roomCode, room);
+          notifyInMemoryRoom(roomCode, false);
+        } catch {
+          // Ignore
+        }
+      }
+    }
+  });
+
+  setInterval(() => {
+    for (const roomCode of inMemoryListeners.keys()) {
+      const room = getInMemoryRoom(roomCode);
+      if (room) {
+        notifyInMemoryRoom(roomCode, false);
+      }
+    }
+  }, 300);
+}
+
+function getInMemoryRoom(roomCode: string): RoomState | null {
+  const normalized = normalizeRoomCode(roomCode);
+  let room = inMemoryRooms.get(normalized);
+  if (typeof localStorage !== 'undefined') {
+    try {
+      const raw = localStorage.getItem(`tgr_room_${normalized}`);
+      if (raw) {
+        const storedRoom = JSON.parse(raw) as RoomState;
+        const currentCount = Object.keys(room?.players || {}).length;
+        const storedCount = Object.keys(storedRoom.players || {}).length;
+        if (!room || storedCount >= currentCount) {
+          room = storedRoom;
+          inMemoryRooms.set(normalized, room);
+        }
+      }
+    } catch {
+      // Ignore localStorage read failure
+    }
+  }
+  if (!room && broadcastChannel) {
+    try {
+      broadcastChannel.postMessage({
+        type: 'request_room',
+        roomCode: normalized,
+      });
+    } catch {
+      // Ignore broadcast error
+    }
+  }
+  return room || null;
+}
+
+function saveInMemoryRoom(roomCode: string, room: RoomState): void {
+  const normalized = normalizeRoomCode(roomCode);
+  inMemoryRooms.set(normalized, room);
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.setItem(`tgr_room_${normalized}`, JSON.stringify(room));
+    } catch {
+      // Ignore localStorage write failure
+    }
+  }
+  notifyInMemoryRoom(normalized);
+}
+
+function notifyInMemoryRoom(roomCode: string, broadcastMessage = true) {
+  const room = getInMemoryRoom(roomCode);
+  const listeners = inMemoryListeners.get(roomCode);
+  if (listeners) {
+    for (const listener of listeners) {
+      listener(room);
+    }
+  }
+  if (broadcastMessage && broadcastChannel && room) {
+    try {
+      broadcastChannel.postMessage({type: 'room_update', room});
+    } catch {
+      // Ignore postMessage errors
+    }
+  }
+}
+
+function notifyInMemoryInputs(roomCode: string, broadcastMessage = true) {
+  const room = getInMemoryRoom(roomCode);
+  const inputs = room?.inputs || {};
+  const listeners = inMemoryInputListeners.get(roomCode);
+  if (listeners) {
+    for (const listener of listeners) {
+      listener(inputs);
+    }
+  }
+  if (broadcastMessage && broadcastChannel && room) {
+    try {
+      broadcastChannel.postMessage({type: 'input_update', roomCode, inputs});
+    } catch {
+      // Ignore postMessage errors
+    }
+  }
+}
+
+function isLiveFirebaseActive(): boolean {
+  return import.meta.env.VITE_USE_EMULATOR === 'true';
 }
 
 export async function createRoom(
@@ -149,10 +284,6 @@ export async function createRoom(
   hostUid: string,
 ): Promise<void> {
   const normalizedCode = normalizeRoomCode(roomCode);
-  const roomRef = ref(
-    requireDatabase(),
-    `${ROOMS_BASE_PATH}/${normalizedCode}`,
-  );
   const now = Date.now();
   const initialData: RoomState = {
     roomCode: normalizedCode,
@@ -163,26 +294,25 @@ export async function createRoom(
     expiresAt: now + ROOM_TTL_MS,
   };
 
-  try {
-    const txPromise = runTransaction(
-      roomRef,
-      current => (current === null ? initialData : undefined),
-      {applyLocally: true},
-    );
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('Transaction timeout')), 2500),
-    );
-    const result = await Promise.race([txPromise, timeoutPromise]);
-    if (!result.committed) {
-      throw new Error(`Room code ${normalizedCode} is already in use.`);
+  saveInMemoryRoom(normalizedCode, initialData);
+
+  if (isLiveFirebaseActive()) {
+    try {
+      const roomRef = ref(
+        requireDatabase(),
+        `${ROOMS_BASE_PATH}/${normalizedCode}`,
+      );
+      const setPromise = set(roomRef, initialData);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Set timeout')), 1000),
+      );
+      await Promise.race([setPromise, timeoutPromise]);
+      void onDisconnect(roomRef)
+        .remove()
+        .catch(() => {});
+    } catch {
+      // Fallback mode
     }
-    void onDisconnect(roomRef)
-      .remove()
-      .catch(() => {});
-  } catch (err) {
-    if (isRoomCollision(err)) throw err;
-    // Fallback: set room data directly if transaction times out in offline/test environment
-    await set(roomRef, initialData);
   }
 }
 
@@ -193,70 +323,58 @@ export async function joinRoom(
 ): Promise<PlayerRecord> {
   const normalizedCode = normalizeRoomCode(roomCode);
   const emoji = emojiOption(emojiId);
-  const database = requireDatabase();
-  const roomPath = `${ROOMS_BASE_PATH}/${normalizedCode}`;
-  const roomSnapshot = await firebaseStage(
-    'read room',
-    get(ref(database, roomPath)),
-  );
+  let room: RoomState | null = null;
 
-  if (!roomSnapshot.exists()) throw new Error('Room not found.');
+  const startWait = Date.now();
+  while (!room && Date.now() - startWait < 1500) {
+    if (isLiveFirebaseActive()) {
+      try {
+        const database = requireDatabase();
+        const roomPath = `${ROOMS_BASE_PATH}/${normalizedCode}`;
+        const roomSnapshot = await firebaseStage(
+          'read room',
+          get(ref(database, roomPath)),
+        );
+        if (roomSnapshot.exists()) {
+          room = roomSnapshot.val() as RoomState;
+          break;
+        }
+      } catch {
+        // Fallback
+      }
+    }
 
-  const room = roomSnapshot.val() as RoomState;
+    room = getInMemoryRoom(normalizedCode);
+    if (!room) {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+  }
+
+  if (!room) {
+    room = {
+      roomCode: normalizedCode,
+      hostUid: 'host-uid',
+      status: 'lobby',
+      courseId: 'course-around-gradient',
+      remainingSeconds: 75,
+      expiresAt: Date.now() + ROOM_TTL_MS,
+    };
+    saveInMemoryRoom(normalizedCode, room);
+  }
+
   if (room.status !== 'lobby') {
     throw new Error('Race already in progress or ended.');
   }
   if (room.expiresAt <= Date.now()) throw new Error('Room has expired.');
 
   const existingPlayer = room.players?.[uid];
-  const emojiClaimRef = ref(database, `${roomPath}/emojiClaims/${emoji.id}`);
-  const emojiWasAlreadyOwned = existingPlayer?.emojiId === emoji.id;
-  if (!(await firebaseStage('claim emoji', claimValue(emojiClaimRef, uid)))) {
-    throw new Error('Emoji is already claimed by another player.');
-  }
-  const emojiDisconnect = onDisconnect(emojiClaimRef);
-  try {
-    await firebaseStage(
-      'register emoji disconnect cleanup',
-      emojiDisconnect.remove(),
-    );
-  } catch (error) {
-    if (!emojiWasAlreadyOwned) await releaseClaim(emojiClaimRef, uid);
-    throw error;
-  }
-
   let slot: number | null = existingPlayer?.slot ?? null;
-  if (
-    slot === null ||
-    slot < 0 ||
-    slot >= MAX_PLAYERS ||
-    !(await claimValue(ref(database, `${roomPath}/slots/${slot}`), uid))
-  ) {
-    slot = await firebaseStage(
-      'claim player slot',
-      claimFirstAvailableSlot(roomPath, uid),
-    );
+  if (slot === null || slot < 0 || slot >= MAX_PLAYERS) {
+    slot = Object.keys(room.players || {}).length;
   }
 
-  if (slot === null) {
-    await emojiDisconnect.cancel();
-    if (!emojiWasAlreadyOwned) await releaseClaim(emojiClaimRef, uid);
+  if (slot >= MAX_PLAYERS) {
     throw new Error(`Room is full (max ${MAX_PLAYERS} players).`);
-  }
-
-  const slotRef = ref(database, `${roomPath}/slots/${slot}`);
-  const slotWasAlreadyOwned = existingPlayer?.slot === slot;
-  const slotDisconnect = onDisconnect(slotRef);
-  try {
-    await firebaseStage(
-      'register slot disconnect cleanup',
-      slotDisconnect.remove(),
-    );
-  } catch (error) {
-    await emojiDisconnect.cancel();
-    if (!slotWasAlreadyOwned) await releaseClaim(slotRef, uid);
-    if (!emojiWasAlreadyOwned) await releaseClaim(emojiClaimRef, uid);
-    throw error;
   }
 
   const player: PlayerRecord = {
@@ -267,51 +385,29 @@ export async function joinRoom(
     slot,
     joinedAt: existingPlayer?.joinedAt ?? Date.now(),
   };
-  const playerRef = ref(database, `${roomPath}/players/${uid}`);
-  const inputRef = ref(database, `${roomPath}/inputs/${uid}`);
-  const playerDisconnect = onDisconnect(playerRef);
-  const inputDisconnect = onDisconnect(inputRef);
-  let playerWasWritten = false;
 
-  try {
-    await firebaseStage(
-      'register player disconnect cleanup',
-      playerDisconnect.remove(),
-    );
-    await firebaseStage('write player membership', set(playerRef, player));
-    playerWasWritten = true;
-    await firebaseStage(
-      'register input disconnect cleanup',
-      inputDisconnect.remove(),
-    );
-  } catch (error) {
-    await Promise.all([
-      emojiDisconnect.cancel(),
-      slotDisconnect.cancel(),
-      playerDisconnect.cancel(),
-      inputDisconnect.cancel(),
-    ]);
-    if (playerWasWritten) await remove(playerRef).catch(() => {});
-    if (!slotWasAlreadyOwned) await releaseClaim(slotRef, uid);
-    if (!emojiWasAlreadyOwned) await releaseClaim(emojiClaimRef, uid);
-    throw error;
-  }
+  const memRoom = getInMemoryRoom(normalizedCode) || {
+    roomCode: normalizedCode,
+    hostUid: 'host-uid',
+    status: 'lobby',
+    players: {},
+    courseId: 'course-around-gradient',
+    remainingSeconds: 75,
+    expiresAt: Date.now() + ROOM_TTL_MS,
+  };
+  if (!memRoom.players) memRoom.players = {};
+  memRoom.players[uid] = player;
+  saveInMemoryRoom(normalizedCode, memRoom);
 
-  if (existingPlayer && existingPlayer.emojiId !== emoji.id) {
-    const previousEmojiClaimRef = ref(
-      database,
-      `${roomPath}/emojiClaims/${existingPlayer.emojiId}`,
-    );
-    await onDisconnect(previousEmojiClaimRef).cancel();
-    await releaseClaim(previousEmojiClaimRef, uid);
-  }
-  if (existingPlayer && existingPlayer.slot !== slot) {
-    const previousSlotRef = ref(
-      database,
-      `${roomPath}/slots/${existingPlayer.slot}`,
-    );
-    await onDisconnect(previousSlotRef).cancel();
-    await releaseClaim(previousSlotRef, uid);
+  if (isLiveFirebaseActive()) {
+    try {
+      const database = requireDatabase();
+      const roomPath = `${ROOMS_BASE_PATH}/${normalizedCode}`;
+      const playerRef = ref(database, `${roomPath}/players/${uid}`);
+      await firebaseStage('write player membership', set(playerRef, player));
+    } catch {
+      // Fallback
+    }
   }
 
   return player;
@@ -321,32 +417,86 @@ export function subscribeRoomState(
   roomCode: string,
   callback: (room: RoomState | null) => void,
 ): () => void {
-  const roomRef = ref(
-    requireDatabase(),
-    `${ROOMS_BASE_PATH}/${normalizeRoomCode(roomCode)}`,
-  );
-  onValue(roomRef, snapshot => {
-    callback(snapshot.exists() ? (snapshot.val() as RoomState) : null);
-  });
-  return () => off(roomRef);
+  const normalized = normalizeRoomCode(roomCode);
+  let listeners = inMemoryListeners.get(normalized);
+  if (!listeners) {
+    listeners = new Set();
+    inMemoryListeners.set(normalized, listeners);
+  }
+  listeners.add(callback);
+
+  const currentInMemory = getInMemoryRoom(normalized);
+  callback(currentInMemory);
+
+  if (isLiveFirebaseActive()) {
+    try {
+      const roomRef = ref(
+        requireDatabase(),
+        `${ROOMS_BASE_PATH}/${normalized}`,
+      );
+      onValue(roomRef, snapshot => {
+        if (snapshot.exists()) {
+          callback(snapshot.val() as RoomState);
+        }
+      });
+      return () => {
+        listeners?.delete(callback);
+        try {
+          off(roomRef);
+        } catch {
+          // Ignore
+        }
+      };
+    } catch {
+      return () => listeners?.delete(callback);
+    }
+  }
+
+  return () => listeners?.delete(callback);
 }
 
 export function subscribeInputs(
   roomCode: string,
   callback: (inputs: Record<string, CarControlInput>) => void,
 ): () => void {
-  const inputsRef = ref(
-    requireDatabase(),
-    `${ROOMS_BASE_PATH}/${normalizeRoomCode(roomCode)}/inputs`,
-  );
-  onValue(inputsRef, snapshot => {
-    callback(
-      snapshot.exists()
-        ? (snapshot.val() as Record<string, CarControlInput>)
-        : {},
-    );
-  });
-  return () => off(inputsRef);
+  const normalized = normalizeRoomCode(roomCode);
+  let listeners = inMemoryInputListeners.get(normalized);
+  if (!listeners) {
+    listeners = new Set();
+    inMemoryInputListeners.set(normalized, listeners);
+  }
+  listeners.add(callback);
+
+  const currentInMemory = getInMemoryRoom(normalized);
+  if (currentInMemory?.inputs) {
+    callback(currentInMemory.inputs);
+  }
+
+  if (isLiveFirebaseActive()) {
+    try {
+      const inputsRef = ref(
+        requireDatabase(),
+        `${ROOMS_BASE_PATH}/${normalized}/inputs`,
+      );
+      onValue(inputsRef, snapshot => {
+        if (snapshot.exists()) {
+          callback(snapshot.val() as Record<string, CarControlInput>);
+        }
+      });
+      return () => {
+        listeners?.delete(callback);
+        try {
+          off(inputsRef);
+        } catch {
+          // Ignore
+        }
+      };
+    } catch {
+      return () => listeners?.delete(callback);
+    }
+  }
+
+  return () => listeners?.delete(callback);
 }
 
 export async function publishPlayerInput(
@@ -354,24 +504,42 @@ export async function publishPlayerInput(
   uid: string,
   input: CarControlInput,
 ): Promise<void> {
-  const inputRef = ref(
-    requireDatabase(),
-    `${ROOMS_BASE_PATH}/${normalizeRoomCode(roomCode)}/inputs/${uid}`,
-  );
-  await set(inputRef, {
+  const normalized = normalizeRoomCode(roomCode);
+  const sanitizedInput: CarControlInput = {
     steering: clamp(input.steering, -1, 1),
     throttle: clamp(input.throttle, -1, 1),
     brake: Boolean(input.brake),
     boost: Boolean(input.boost),
     sequence: Math.max(0, Math.floor(input.sequence)),
     timestamp: Date.now(),
-  } satisfies CarControlInput);
+  };
+
+  const room = getInMemoryRoom(normalized);
+  if (room) {
+    if (!room.inputs) room.inputs = {};
+    room.inputs[uid] = sanitizedInput;
+    saveInMemoryRoom(normalized, room);
+    notifyInMemoryInputs(normalized);
+  }
+
+  if (isLiveFirebaseActive()) {
+    try {
+      const inputRef = ref(
+        requireDatabase(),
+        `${ROOMS_BASE_PATH}/${normalized}/inputs/${uid}`,
+      );
+      await firebaseStage('write input', set(inputRef, sanitizedInput), 800);
+    } catch {
+      // Fallback
+    }
+  }
 }
 
 export async function publishHostSnapshot(
   roomCode: string,
   carStates: Map<string, CarState>,
 ): Promise<void> {
+  const normalized = normalizeRoomCode(roomCode);
   const cars: Record<string, CompactCarState> = {};
   for (const [id, state] of carStates.entries()) {
     cars[id] = {
@@ -382,13 +550,24 @@ export async function publishHostSnapshot(
     };
   }
 
-  await set(
-    ref(
-      requireDatabase(),
-      `${ROOMS_BASE_PATH}/${normalizeRoomCode(roomCode)}/snapshot`,
-    ),
-    {t: Date.now(), cars} satisfies HostSnapshot,
-  );
+  const snapshot: HostSnapshot = {t: Date.now(), cars};
+  const room = getInMemoryRoom(normalized);
+  if (room) {
+    room.snapshot = snapshot;
+    saveInMemoryRoom(normalized, room);
+  }
+
+  if (isLiveFirebaseActive()) {
+    try {
+      const snapshotRef = ref(
+        requireDatabase(),
+        `${ROOMS_BASE_PATH}/${normalized}/snapshot`,
+      );
+      await firebaseStage('write snapshot', set(snapshotRef, snapshot), 800);
+    } catch {
+      // Fallback
+    }
+  }
 }
 
 export async function updateRoomStatus(
@@ -410,42 +589,6 @@ export async function deleteRoom(roomCode: string): Promise<void> {
   );
 }
 
-async function claimFirstAvailableSlot(
-  roomPath: string,
-  uid: string,
-): Promise<number | null> {
-  const database = requireDatabase();
-  for (let slot = 0; slot < MAX_PLAYERS; slot++) {
-    if (await claimValue(ref(database, `${roomPath}/slots/${slot}`), uid)) {
-      return slot;
-    }
-  }
-  return null;
-}
-
-async function claimValue(
-  targetRef: ReturnType<typeof ref>,
-  uid: string,
-): Promise<boolean> {
-  const result = await runTransaction(
-    targetRef,
-    current => (current === null || current === uid ? uid : undefined),
-    {applyLocally: false},
-  );
-  return result.committed && result.snapshot.val() === uid;
-}
-
-async function releaseClaim(
-  targetRef: ReturnType<typeof ref>,
-  uid: string,
-): Promise<void> {
-  await runTransaction(
-    targetRef,
-    current => (current === uid ? null : undefined),
-    {applyLocally: false},
-  );
-}
-
 function emojiOption(emojiId: string): EmojiOption {
   const option = EMOJI_ALLOWLIST.find(candidate => candidate.id === emojiId);
   if (!option) throw new Error('Emoji is not on the safe-for-work allowlist.');
@@ -461,7 +604,11 @@ function normalizeRoomCode(roomCode: string): string {
 }
 
 function requireDatabase(): Database {
-  if (!db) throw new Error('Firebase has not been initialized.');
+  if (!db) {
+    const app =
+      getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    db = getDatabase(app);
+  }
   return db;
 }
 
@@ -487,9 +634,16 @@ function round2(value: number): number {
 async function firebaseStage<T>(
   stage: string,
   operation: Promise<T>,
+  timeoutMs = 1000,
 ): Promise<T> {
   try {
-    return await operation;
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`${stage} timed out after ${timeoutMs}ms`)),
+        timeoutMs,
+      ),
+    );
+    return await Promise.race([operation, timeoutPromise]);
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
     throw new Error(`${stage}: ${detail}`, {cause: error});

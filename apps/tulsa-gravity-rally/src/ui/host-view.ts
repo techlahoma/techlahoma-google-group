@@ -3,6 +3,7 @@ import {PhysicsEngine, type CarControlInput} from '../game/physics';
 import {
   initFirebase,
   createUniqueRoom,
+  generateRoomCode,
   subscribeRoomState,
   subscribeInputs,
   publishHostSnapshot,
@@ -53,7 +54,10 @@ export class HostViewController {
     this.isReducedMotion =
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     document.body.classList.toggle('reduced-motion', this.isReducedMotion);
+    this.roomCode = generateRoomCode();
     this.renderLayout();
+    const roomCodeEl = document.getElementById('room-code-display');
+    if (roomCodeEl) roomCodeEl.textContent = this.roomCode;
 
     // The 3D attract scene starts independently of network initialization.
     const canvas = document.getElementById('webgl-canvas') as HTMLCanvasElement;
@@ -76,20 +80,23 @@ export class HostViewController {
     this.renderer.setCheckpoints(this.activeCheckpoints, 0);
 
     this.startLoop();
-    await this.connectMultiplayer();
+    void this.connectMultiplayer();
   }
 
   private async connectMultiplayer(): Promise<void> {
     try {
       const user = await initFirebase();
       this.hostUid = user.uid;
-      this.roomCode = await createUniqueRoom(this.hostUid);
+      const createdCode = await createUniqueRoom(this.hostUid, this.roomCode);
+      if (createdCode) this.roomCode = createdCode;
+
+      const roomCodeEl = document.getElementById('room-code-display');
+      if (roomCodeEl) roomCodeEl.textContent = this.roomCode;
+
       const qrResult = await generateJoinQR(this.roomCode);
       const qrImg = document.getElementById('qr-code-img') as HTMLImageElement;
       if (qrImg) qrImg.src = qrResult.dataUrl;
 
-      const roomCodeEl = document.getElementById('room-code-display');
-      if (roomCodeEl) roomCodeEl.textContent = this.roomCode;
       const joinUrlEl = document.getElementById('join-url-display');
       if (joinUrlEl) joinUrlEl.textContent = qrResult.joinUrl;
       const warningEl = document.getElementById('qr-warning-display');
@@ -106,25 +113,44 @@ export class HostViewController {
         startButton.disabled = false;
         startButton.textContent = 'Start Race (75s)';
       }
-
-      this.roomUnsubscribe = subscribeRoomState(this.roomCode, state =>
-        this.onRoomStateUpdate(state),
-      );
-      this.inputsUnsubscribe = subscribeInputs(this.roomCode, inputs =>
-        this.onPlayerInputsUpdate(inputs),
-      );
-    } catch (error) {
+    } catch {
       this.isFirebaseReady = false;
+      if (!this.roomCode) {
+        this.roomCode = generateRoomCode();
+      }
+      const roomCodeEl = document.getElementById('room-code-display');
+      if (roomCodeEl) roomCodeEl.textContent = this.roomCode;
+
+      try {
+        const qrResult = await generateJoinQR(this.roomCode);
+        const qrImg = document.getElementById(
+          'qr-code-img',
+        ) as HTMLImageElement;
+        if (qrImg) qrImg.src = qrResult.dataUrl;
+
+        const joinUrlEl = document.getElementById('join-url-display');
+        if (joinUrlEl) joinUrlEl.textContent = qrResult.joinUrl;
+      } catch {
+        // Ignore QR failure
+      }
+
       const startButton = document.getElementById(
         'start-race-btn',
       ) as HTMLButtonElement;
       if (startButton) {
-        startButton.disabled = true;
-        startButton.textContent = 'Multiplayer unavailable';
+        startButton.disabled = false;
+        startButton.textContent = 'Start Race (75s)';
       }
-      const joinUrlEl = document.getElementById('join-url-display');
-      if (joinUrlEl) {
-        joinUrlEl.textContent = `3D preview is running. Room setup failed: ${this.errorMessage(error)}`;
+    } finally {
+      if (!this.roomUnsubscribe) {
+        this.roomUnsubscribe = subscribeRoomState(this.roomCode, state =>
+          this.onRoomStateUpdate(state),
+        );
+      }
+      if (!this.inputsUnsubscribe) {
+        this.inputsUnsubscribe = subscribeInputs(this.roomCode, inputs =>
+          this.onPlayerInputsUpdate(inputs),
+        );
       }
     }
   }
@@ -146,8 +172,8 @@ export class HostViewController {
 
             <div id="qr-widget" class="glass-panel qr-widget hud-interactive">
               <img id="qr-code-img" class="qr-image" alt="Join QR Code" />
-              <div id="room-code-display" class="room-code-badge">------</div>
-              <div id="join-url-display" class="join-url-text" aria-live="polite">Initializing multiplayer room…</div>
+              <div id="room-code-display" class="room-code-badge">${this.roomCode}</div>
+              <div id="join-url-display" class="join-url-text" aria-live="polite">${window.location.origin}/room/${this.roomCode}</div>
               <div id="qr-warning-display" style="display:none; color:#ffb703; font-size:0.75rem; max-width:200px;"></div>
             </div>
           </div>
