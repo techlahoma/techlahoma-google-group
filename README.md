@@ -1,5 +1,9 @@
 # Techlahoma Google Group
 
+> **Here for the November 19, 2026 workshop? Start at [sam.lc/wit](https://sam.lc/wit).** That is the
+> [workshop page in Notion](https://samcarltoncreative.notion.site/Google-Dev-Women-in-Tech-Actual-Productivity-with-AI-41c012b9b020819bbad8ce08e8b336b6)
+> with every demo, prompt, and link from **Google Dev × Women+ in Tech: Actual Productivity with AI**.
+
 Oklahoma's public launchpad for building small Google-powered apps with agents.
 
 [Techlahoma](https://www.techlahoma.org/) maintains this Bun and TypeScript monorepo so Antigravity
@@ -104,7 +108,10 @@ Notion session.
 Give every AI app you use one shared Markdown memory, then search it like a 2010-style Google, in the
 browser. Closing demo for Techlahoma, GDG Tulsa and Women+ in Technology of Tulsa.
 
-- [Event page with QR code](https://sam.lc/wit) and the [live demo at oogle.web.app](https://oogle.web.app/)
+- **Start here:** the [workshop page in Notion](https://sam.lc/wit), with every demo, prompt, and link, plus a QR
+  code to share it with the person next to you
+- [Live demo at oogle.web.app](https://oogle.web.app/) and its [setup page](https://oogle.web.app/setup)
+- [Event page](https://luma.com/b7eptsqo)
 
 - [App README: run it, how search works, the brain layout](apps/brain-search/README.md)
 - [One-prompt Antigravity setup](apps/brain-search/PROMPT.md)
@@ -370,6 +377,11 @@ Google Developer Group; its activities and opinions are not affiliated with or e
 ## Workshop resource directory
 
 The complete public resource directory for GDG Tulsa workshops, newest event first.
+
+**Google Dev × Women+ in Tech: Actual Productivity with AI — November 19, 2026.** Start with the
+[workshop page in Notion](https://samcarltoncreative.notion.site/Google-Dev-Women-in-Tech-Actual-Productivity-with-AI-41c012b9b020819bbad8ce08e8b336b6)
+(short link: [sam.lc/wit](https://sam.lc/wit)), then the [brain search app](apps/brain-search/README.md) and the
+[live demo](https://oogle.web.app/). The page links back to this repository.
 
 **Google Dev: Local Models & Fine-Tuning — September 22, 2026.** Start with the
 [GDG Tulsa — Model Workshop Kit in Notion](https://samcarltoncreative.notion.site/GDG-Tulsa-Model-Workshop-Kit-3dc012b9b020817e93b7dac0365ca614)
