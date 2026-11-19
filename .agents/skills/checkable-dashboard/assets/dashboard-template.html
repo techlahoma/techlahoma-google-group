@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px 28px;font:15px/1.45 system-ui,sans-serif;color:#1c1c1c;background:#fff}
+main{max-width:1180px;margin:0 auto}
+.ctx{color:#555;font-size:13px;margin:0 0 6px}
+h1{font-size:34px;line-height:1.15;margin:0 0 12px;font-weight:700}
+h2{font-size:15px;margin:0 0 8px;font-weight:600}
+.acc{color:#b3400a}
+.nums{display:flex;flex-wrap:wrap;gap:6px 28px;margin:0 0 14px;padding:0;list-style:none}
+.nums button,.bar button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.nums b{font-size:20px}
+.nums button:hover b,.nums button:focus b{text-decoration:underline}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+.grid>section{min-width:0}
+.bar{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center;margin:5px 0}
+.bar button{display:flex;align-items:center;gap:8px;width:100%}
+.bar i{display:block;height:22px;background:#9a9a9a;min-width:2px}
+.bar.top i{background:#b3400a}
+.note{color:#555;font-size:13px;margin:6px 0 0}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:3px 10px 3px 0;border-bottom:1px solid #e4e4e4;white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis}
+th{color:#555;font-weight:600}
+#rows{margin-top:14px;border-top:2px solid #1c1c1c;padding-top:8px}
+details{margin-top:14px;font-size:13px;color:#333}
+summary{cursor:pointer;font-weight:600}
+.empty{padding:16px;border:1px dashed #888;margin:12px 0}
+@media(max-width:700px){body{padding:14px}h1{font-size:24px}.grid{grid-template-columns:minmax(0,1fr);gap:16px}.bar{grid-template-columns:84px 1fr}}
+</style>
+</head>
+<body>
+<main>
+<p class="ctx" id="ctx"></p>
+<h1 id="answer"></h1>
+<ul class="nums" id="nums"></ul>
+<div class="grid">
+<section><h2 id="ctitle"></h2><div id="bars"></div><p class="note" id="adds"></p><p class="note" id="ctext"></p></section>
+<section><h2 id="ttitle"></h2><div class="tw" id="table"></div></section>
+</div>
+<section id="rows" hidden><h2 id="rtitle"></h2><div class="tw" id="rtable"></div></section>
+<details><summary>Definitions and how rows were counted</summary><ul id="defs"></ul></details>
+<div class="empty" id="empty" hidden>No data loaded. Choose the CSV file: <input type="file" id="file" accept=".csv,text/csv"></div>
+</main>
+<script type="application/json" id="config">{}</script>
+<script type="text/plain" id="data"></script>
+<script>
+// Every number on this page is computed below from the rows in #data. Nothing is typed in.
+const $=id=>document.getElementById(id);
+const C=JSON.parse($('config').textContent||'{}');
+function parseCSV(t){const out=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){row.push(f);f=''}else if(c=='\n'||c=='\r'){if(c=='\r'&&t[i+1]=='\n')i++;row.push(f);f='';if(row.some(x=>x!==''))out.push(row);row=[]}else f+=c}row.push(f);if(row.some(x=>x!==''))out.push(row);return out}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isDate=v=>/^\d{4}-\d{2}-\d{2}/.test(v);
+const day=v=>Date.UTC(+v.slice(0,4),+v.slice(5,7)-1,+v.slice(8,10))/864e5;
+const fmtDate=v=>new Date(day(v)*864e5).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});
+// where: {"col":"value"} · "" = blank · "*" = not blank · ["a","b"] = any of · "<=DATE-7" style not supported
+function match(r,w){for(const k in (w||{})){const v=(r[k]||'').trim(),x=w[k];if(Array.isArray(x)){if(!x.includes(v))return false}else if(x==='*'){if(v==='')return false}else if(v!==String(x))return false}return true}
+function render(text){
+  const all=parseCSV(text.replace(/^﻿/,''));
+  if(all.length<2){$('empty').hidden=false;$('answer').textContent='No data loaded';return}
+  $('empty').hidden=true;
+  const head=all[0].map(h=>h.trim()),raw=all.slice(1).map(a=>Object.fromEntries(head.map((h,i)=>[h,(a[i]||'').trim()])));
+  const idc=C.id&&head.includes(C.id)?C.id:head[0];
+  const notes=[];
+  // 1. leave out rows that are not "one row" (counted, not hidden)
+  let rows=raw;
+  for(const e of C.exclude||[]){const cut=rows.filter(r=>match(r,e.where));rows=rows.filter(r=>!match(r,e.where));notes.push(`${cut.length} row${cut.length==1?'':'s'} left out: ${e.why||JSON.stringify(e.where)} (${cut.map(r=>r[idc]).join(', ')||'none'}).`)}
+  // 2. count a repeated ID once
+  const seen=new Set,dups=[];rows=rows.filter(r=>{if(seen.has(r[idc])){dups.push(r[idc]);return false}seen.add(r[idc]);return true});
+  notes.push(dups.length?`${dups.length} repeated ID counted once: ${dups.join(', ')}.`:'No repeated IDs.');
+  // 3. data as of = latest date found in the data, never today's date
+  let asof='';for(const r of raw)for(const h of head)if(isDate(r[h])&&r[h].slice(0,10)>asof)asof=r[h].slice(0,10);
+  const unit=C.unit||'rows';
+  const calc=(m)=>{const rs=rows.filter(r=>match(r,m.where));let v=rs.length,u=m.unit||(m.op==='sum'||m.op==='avg'?m.col:unit);
+    if(m.op==='sum'||m.op==='avg'){const xs=rs.map(r=>parseFloat(String(r[m.col]).replace(/[$,]/g,''))).filter(x=>!isNaN(x));v=xs.reduce((a,b)=>a+b,0);if(m.op==='avg')v=xs.length?v/xs.length:NaN}
+    if(m.op==='age'||m.op==='maxage'){const xs=rs.filter(r=>isDate(r[m.col])).map(r=>day(asof)-day(r[m.col]));v=m.op==='age'?(xs.length?xs.reduce((a,b)=>a+b,0)/xs.length:NaN):Math.max(...xs);u=m.unit||'days'}
+    return{rs,v,u,text:isNaN(v)||!isFinite(v)?'no data':(Math.round(v*(m.decimals?10**m.decimals:1))/(m.decimals?10**m.decimals:1)).toLocaleString('en-US')}};
+  // chart: one bar per value of chart.column, over the rows matching chart.where
+  const ch=C.chart||{},crow=rows.filter(r=>match(r,ch.where));
+  const counts={};for(const r of crow){const k=r[ch.column]||'(blank)';(counts[k]=counts[k]||[]).push(r)}
+  let keys=Object.keys(counts),other=[];
+  if(ch.order){other=keys.filter(k=>!ch.order.includes(k));keys=ch.order}else keys.sort((a,b)=>counts[b].length-counts[a].length);
+  const n=k=>(counts[k]||[]).length,max=Math.max(1,...keys.map(n)),top=keys.slice().sort((a,b)=>n(b)-n(a))[0]||'';
+  const inBars=keys.reduce((a,k)=>a+n(k),0),otherN=other.reduce((a,k)=>a+n(k),0);
+  const ms=(C.metrics||[]).map(m=>({m,...calc(m)}));
+  const vars={top,topN:n(top),total:crow.length,rows:raw.length,asof:fmtDate(asof||'1970-01-01'),unit};ms.forEach((x,i)=>vars['m'+i]=x.text);
+  const fill=s=>esc(s).replace(/\{(\w+)\}/g,(_,k)=>k in vars?(k=='top'?`<span class="acc">${esc(vars[k])}</span>`:esc(vars[k])):'{'+k+'}');
+  document.title=C.question||'Dashboard';
+  $('ctx').textContent=`${C.question||''} · Data as of ${asof?fmtDate(asof):'unknown date'} · ${raw.length} rows read · ${rows.length} ${unit}${C.sample?' · Made-up sample data':''}`;
+  $('answer').innerHTML=fill(C.answer||'{top} has the most {unit}: {topN} of {total}');
+  const show=(title,rs)=>{$('rows').hidden=false;$('rtitle').textContent=`${title}: ${rs.length} row${rs.length==1?'':'s'}`;$('rtable').innerHTML=tbl(rs.slice(0,200),head);$('rows').scrollIntoView({block:'nearest'})};
+  const tbl=(rs,cols)=>rs.length?`<table><thead><tr>${cols.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rs.map(r=>`<tr>${cols.map(c=>`<td>${esc(r[c]??'')}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'<p class="note">0 matching rows</p>';
+  $('nums').innerHTML=ms.map((x,i)=>`<li><button data-i="${i}" title="Show the rows behind this number"><b>${x.text}</b> ${x.m.label.toLowerCase().includes(String(x.u).toLowerCase())?'':esc(x.u)+' · '}${esc(x.m.label)}</button></li>`).join('');
+  $('nums').onclick=e=>{const b=e.target.closest('button');if(b){const x=ms[+b.dataset.i];show(x.m.label,x.rs)}};
+  $('ctitle').textContent=ch.title||`${unit} by ${ch.column} (click a bar to see its rows)`;
+  $('bars').innerHTML=keys.map(k=>`<div class="bar${k===top?' top':''}"><span>${esc(k)}</span><button data-k="${esc(k)}" title="Show these rows"><i style="width:${n(k)/max*88}%"></i><b>${n(k)}</b></button></div>`).join('')||'<p class="note">0 matching rows</p>';
+  $('bars').onclick=e=>{const b=e.target.closest('button');if(b)show(`${ch.column} = ${b.dataset.k}`,counts[b.dataset.k]||[])};
+  $('adds').textContent=other.length?`${inBars} in the bars + ${otherN} unmapped (${other.map(k=>`"${k}": ${counts[k].map(r=>r[idc]).join(', ')}`).join('; ')}) = ${crow.length} ${unit}. The unmapped value was not changed.`:`The bars add up to ${inBars} of ${crow.length} ${unit}.`;
+  $('ctext').textContent=keys.length?`Bars start at zero. The colored bar, ${top}, is the largest group.`:'';
+  const t=C.table;if(t){let rs=rows.filter(r=>match(r,t.where));if(t.sort)rs.sort((a,b)=>(a[t.sort]>b[t.sort]?1:a[t.sort]<b[t.sort]?-1:0)*(t.desc?-1:1));rs=rs.slice(0,t.limit||10);$('ttitle').textContent=t.title||`First ${rs.length} by ${t.sort||idc}`;$('table').innerHTML=tbl(rs,[idc,...(t.columns||head.slice(1,5)).filter(c=>c!==idc)])}
+  $('defs').innerHTML=[`One row is ${esc(C.row||'one record')}. ${raw.length} rows were read; ${rows.length} are counted.`,...notes.map(esc),`"Data as of" is the latest date found in the file (${asof?fmtDate(asof):'none'}), not today's date.`,...ms.map(x=>`<b>${esc(x.m.label)}</b>: ${esc(x.m.define||'count of rows where '+JSON.stringify(x.m.where||{}))}${x.m.op=='age'?' Exact value '+(isNaN(x.v)?'n/a':x.v.toFixed(4))+', rounded once for display.':''}`),`<b>Chart</b>: ${esc(unit)} where ${esc(JSON.stringify(ch.where||{}))}, grouped by ${esc(ch.column||'')}.`,...(C.assumptions||[]).map(a=>'Assumption: '+esc(a)),...(C.cannot||[]).map(a=>'This data cannot answer: '+esc(a))].map(x=>`<li>${x}</li>`).join('');
+}
+$('file').onchange=e=>e.target.files[0]&&e.target.files[0].text().then(render);
+render($('data').textContent);
+</script>
+</body>
+</html>

@@ -87,7 +87,7 @@ Our lazy run on Gemini Flash is saved as [expected/lazy-dashboard.png](expected/
 
 ## Install the skill
 
-The method on this page is packaged as an agent skill, [checkable-dashboard](../../.agents/skills/checkable-dashboard/SKILL.md). It makes the AI write the brief, profile the data, compute every number from the rows, and hand you three checks to run.
+The method on this page is packaged as an agent skill, [checkable-dashboard](../../.agents/skills/checkable-dashboard/SKILL.md). It makes the AI write the brief, profile the data, compute every number from the rows, and hand you three checks to run. By default it runs in one pass from a ready-made page template in the skill folder (about a minute on a light model); say "take your time" or "ask me first" for the careful path. The install command copies the template; the paste-into-chat route gets `SKILL.md` only and the AI writes the page itself.
 
 - **Antigravity, Claude Code, or Codex.** In a terminal, inside your project folder (needs [Node.js](https://nodejs.org/)):
 
