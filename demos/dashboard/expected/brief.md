@@ -1,0 +1,4 @@
+- **Audience:** a project manager who checks this on Monday morning.
+- **Question:** where are tickets stuck right now?
+- **One row means:** one item on the work board as of the export. Only rows where kind is Ticket are tickets.
+- **Data through:** November 19, 2026, the latest date anywhere in the file.

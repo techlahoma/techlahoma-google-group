@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where are tickets stuck? Data through Nov 19, 2026</title>
+<style>
+  :root { --ink:#1b1f24; --soft:#59616b; --line:#e3e6ea; --gray:#b3bac3; --wash:#f3f4f6; --accent:#b4530a; --accent-wash:#fbeadb; --accent-ink:#8a3d06; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#fff; color:var(--ink); font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-variant-numeric:tabular-nums; -webkit-text-size-adjust:100%; }
+  ::selection { background:var(--accent-wash); }
+  main { max-width:1120px; margin:0 auto; padding:22px 32px 40px; }
+  header { display:flex; flex-wrap:wrap; justify-content:space-between; gap:2px 24px; color:var(--soft); font-size:14px; }
+  header p { margin:0; }
+  h1 { font-size:46px; line-height:1.1; letter-spacing:-0.02em; font-weight:700; margin:18px 0 10px; }
+  h1 em { font-style:normal; color:var(--accent); }
+  h1 span { display:inline-block; }
+  .context { font-size:18px; color:var(--soft); margin:0; }
+  .cols2 { display:grid; grid-template-columns:minmax(0,8fr) minmax(0,5fr); gap:24px 48px; margin-top:30px; }
+  h2 { font-size:15px; line-height:1.3; font-weight:650; margin:0 0 10px; }
+  ul.nudge { list-style:none; margin:0; padding:0; border-top:1px solid var(--ink); }
+  .nudge li { display:grid; grid-template-columns:140px 64px 1fr; align-items:center; gap:4px 12px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .who { font-weight:650; font-size:17px; }
+  .n { color:var(--soft); font-size:14px; }
+  .chips { display:flex; flex-wrap:wrap; gap:5px; }
+  .chip { background:var(--accent-wash); color:var(--accent-ink); border-radius:999px; padding:1px 9px; font-size:13.5px; white-space:nowrap; }
+  .row { display:grid; grid-template-columns:66px 1fr; align-items:center; gap:10px; margin:6px 0; }
+  .stage { font-size:15px; }
+  .track { display:flex; align-items:center; gap:8px; }
+  .bar { height:24px; background:var(--gray); border-radius:2px; min-width:2px; }
+  .bar.accent, .fill.hot { background:var(--accent); }
+  .count { font-weight:650; }
+  .unmapped { font-size:13.5px; color:var(--soft); margin:10px 0 0; }
+  .unmapped b { color:var(--ink); }
+  .oldest { margin-top:30px; }
+  table { width:100%; border-collapse:collapse; font-size:15px; border-top:1px solid var(--ink); }
+  th { text-align:left; font-weight:400; font-size:12.5px; color:var(--soft); padding:5px 16px 4px 0; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td { border-bottom:1px solid var(--line); padding:5px 16px 5px 0; white-space:nowrap; vertical-align:middle; }
+  td.id { color:var(--soft); width:1%; }
+  td.title { width:99%; max-width:0; }
+  td.title span { display:block; overflow:hidden; text-overflow:ellipsis; }
+  td.opened { color:var(--soft); }
+  td.age { padding-right:0; }
+  .pill { display:inline-block; min-width:68px; text-align:center; background:var(--wash); color:var(--soft); border-radius:999px; padding:1px 10px; font-size:13px; }
+  .pill.hot { background:var(--accent-wash); color:var(--accent-ink); font-weight:650; }
+  .days { display:inline-block; width:62px; text-align:right; font-weight:650; }
+  .agebar { display:inline-block; width:200px; height:10px; margin-left:10px; vertical-align:middle; }
+  .fill { display:block; height:100%; background:var(--gray); border-radius:2px; min-width:2px; }
+  details { margin-top:26px; border-top:1px solid var(--line); padding-top:12px; }
+  summary { cursor:pointer; color:var(--soft); font-size:14px; width:fit-content; }
+  summary:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+  dl { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:12px 36px; margin:14px 0 0; font-size:14px; }
+  dt { font-weight:650; }
+  dd { margin:0; color:var(--soft); }
+  .cols { display:block; color:var(--ink); }
+  @media (max-width:860px) {
+    h1 { font-size:34px; }
+    .cols2 { grid-template-columns:1fr; }
+  }
+  @media (max-width:560px) {
+    main { padding:14px 16px 32px; }
+    h1 { font-size:27px; margin-top:14px; }
+    .context { font-size:16px; }
+    .cols2, .oldest { margin-top:24px; }
+    .nudge li { grid-template-columns:1fr auto; }
+    .chips { grid-column:1 / 3; }
+    table, tbody { display:block; }
+    thead { display:none; }
+    tr { display:grid; grid-template-columns:auto 1fr auto; gap:2px 10px; align-items:center; border-bottom:1px solid var(--line); padding:8px 0; }
+    td { border:0; padding:0; }
+    td.id { width:auto; }
+    td.title { grid-column:1 / 4; grid-row:2; width:auto; max-width:none; white-space:normal; }
+    td.st { grid-column:3; grid-row:1; }
+    td.owner { grid-column:2; grid-row:1; color:var(--soft); font-size:14px; }
+    td.opened { grid-column:3; grid-row:3; font-size:13px; text-align:right; }
+    td.opened::before { content:"since "; }
+    td.age { grid-column:1 / 3; grid-row:3; display:flex; align-items:center; }
+    .days { width:auto; min-width:58px; text-align:left; }
+    .agebar { flex:1; width:auto; }
+    dl { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <p>Weekly ticket check: where are tickets stuck?</p>
+  <p>Data through Nov 19, 2026 &middot; 56 rows</p>
+</header>
+
+<h1><em>Review</em> is the bottleneck: <span>9 of 22 open tickets, 6 of the 10 oldest.</span></h1>
+<p class="context">22 tickets are open, 3 more than a week ago (19 on Nov 12). Average age of open tickets: 13 days.</p>
+
+<div class="cols2">
+  <section aria-label="Who to nudge">
+    <h2>Who to nudge: 5 people with tickets in Review</h2>
+    <ul class="nudge">
+    <li><span class="who">Hannah Whitlow</span><span class="n">2 tickets</span><span class="chips"><span class="chip">T-1024 <b>31d</b></span><span class="chip">T-1050 <b>3d</b></span></span></li>
+<li><span class="who">Marcus Bell</span><span class="n">4 tickets</span><span class="chips"><span class="chip">T-1029 <b>27d</b></span><span class="chip">T-1040 <b>13d</b></span><span class="chip">T-1043 <b>9d</b></span><span class="chip">T-1049 <b>6d</b></span></span></li>
+<li><span class="who">Dana Okafor</span><span class="n">1 ticket</span><span class="chips"><span class="chip">T-1034 <b>20d</b></span></span></li>
+<li><span class="who">Luis Ortega</span><span class="n">1 ticket</span><span class="chips"><span class="chip">T-1036 <b>16d</b></span></span></li>
+<li><span class="who">Priya Nair</span><span class="n">1 ticket</span><span class="chips"><span class="chip">T-1038 <b>15d</b></span></span></li>
+
+    </ul>
+  </section>
+  <section aria-label="Open tickets by stage">
+    <h2>Where the 22 open tickets sit</h2>
+    <div class="row"><div class="stage">Queue</div><div class="track"><div class="bar" style="width:55.6%"></div><span class="count">5</span></div></div>
+<div class="row"><div class="stage">Build</div><div class="track"><div class="bar" style="width:44.4%"></div><span class="count">4</span></div></div>
+<div class="row"><div class="stage">Review</div><div class="track"><div class="bar accent" style="width:100.0%"></div><span class="count">9</span></div></div>
+<div class="row"><div class="stage">Blocked</div><div class="track"><div class="bar" style="width:33.3%"></div><span class="count">3</span></div></div>
+
+    <p class="unmapped"><b>1 unmapped</b>, not fixed and not in a bar: &ldquo;Reveiw&rdquo; (T-1047). 21 in the bars + 1 unmapped = 22 open.</p>
+  </section>
+</div>
+
+<section class="oldest" aria-label="Ten oldest open tickets">
+  <h2>The 10 oldest open tickets: 6 in Review, the oldest has waited 52 days</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Ticket</th><th>Stage</th><th>Owner</th><th>Opened</th><th>Age, days since opened</th></tr></thead>
+    <tbody>
+    <tr><td class="id">T-1011</td><td class="title"><span title="Replace the label printer in the warehouse">Replace the label printer in the warehouse</span></td><td class="st"><span class="pill">Blocked</span></td><td class="owner">Dana Okafor</td><td class="opened">Sep 28</td><td class="age"><span class="days">52 days</span><span class="agebar"><span class="fill" style="width:100.0%"></span></span></td></tr>
+<tr><td class="id">T-1024</td><td class="title"><span title="Rewrite the damage waiver wording on quotes">Rewrite the damage waiver wording on quotes</span></td><td class="st"><span class="pill hot">Review</span></td><td class="owner">Hannah Whitlow</td><td class="opened">Oct 19</td><td class="age"><span class="days">31 days</span><span class="agebar"><span class="fill hot" style="width:59.6%"></span></span></td></tr>
+<tr><td class="id">T-1029</td><td class="title"><span title="New delivery fee table for out-of-county orders">New delivery fee table for out-of-county orders</span></td><td class="st"><span class="pill hot">Review</span></td><td class="owner">Marcus Bell</td><td class="opened">Oct 23</td><td class="age"><span class="days">27 days</span><span class="agebar"><span class="fill hot" style="width:51.9%"></span></span></td></tr>
+<tr><td class="id">T-1032</td><td class="title"><span title="Renew the liquor liability insurance certificate">Renew the liquor liability insurance certificate</span></td><td class="st"><span class="pill">Blocked</span></td><td class="owner">Priya Nair</td><td class="opened">Oct 28</td><td class="age"><span class="days">22 days</span><span class="agebar"><span class="fill" style="width:42.3%"></span></span></td></tr>
+<tr><td class="id">T-1034</td><td class="title"><span title="Tent inventory count does not match the warehouse sheet">Tent inventory count does not match the warehouse sheet</span></td><td class="st"><span class="pill hot">Review</span></td><td class="owner">Dana Okafor</td><td class="opened">Oct 30</td><td class="age"><span class="days">20 days</span><span class="agebar"><span class="fill hot" style="width:38.5%"></span></span></td></tr>
+<tr><td class="id">T-1035</td><td class="title"><span title="Set up the shared calendar for delivery crews">Set up the shared calendar for delivery crews</span></td><td class="st"><span class="pill">Build</span></td><td class="owner">Priya Nair</td><td class="opened">Nov 2</td><td class="age"><span class="days">17 days</span><span class="agebar"><span class="fill" style="width:32.7%"></span></span></td></tr>
+<tr><td class="id">T-1036</td><td class="title"><span title="Update the vendor onboarding checklist">Update the vendor onboarding checklist</span></td><td class="st"><span class="pill hot">Review</span></td><td class="owner">Luis Ortega</td><td class="opened">Nov 3</td><td class="age"><span class="days">16 days</span><span class="agebar"><span class="fill hot" style="width:30.8%"></span></span></td></tr>
+<tr><td class="id">T-1038</td><td class="title"><span title="Draft the holiday hours notice for customers">Draft the holiday hours notice for customers</span></td><td class="st"><span class="pill hot">Review</span></td><td class="owner">Priya Nair</td><td class="opened">Nov 4</td><td class="age"><span class="days">15 days</span><span class="agebar"><span class="fill hot" style="width:28.8%"></span></span></td></tr>
+<tr><td class="id">T-1039</td><td class="title"><span title="Price check on folding chairs from two suppliers">Price check on folding chairs from two suppliers</span></td><td class="st"><span class="pill">Queue</span></td><td class="owner">Luis Ortega</td><td class="opened">Nov 5</td><td class="age"><span class="days">14 days</span><span class="agebar"><span class="fill" style="width:26.9%"></span></span></td></tr>
+<tr><td class="id">T-1040</td><td class="title"><span title="Fix the broken quote PDF template">Fix the broken quote PDF template</span></td><td class="st"><span class="pill hot">Review</span></td><td class="owner">Marcus Bell</td><td class="opened">Nov 6</td><td class="age"><span class="days">13 days</span><span class="agebar"><span class="fill hot" style="width:25.0%"></span></span></td></tr>
+
+    </tbody>
+  </table>
+</section>
+
+<details>
+  <summary>Definitions and how rows were counted</summary>
+  <dl>
+  <div><dt>Rows: 56</dt><dd>Data rows read from the file, not counting the header. <span class="cols">Columns: all columns.</span></dd></div>
+<div><dt>Data through: Nov 19, 2026</dt><dd>The latest date anywhere in the file. Today&#x27;s date is never used. <span class="cols">Columns: opened, stage_entered, closed.</span></dd></div>
+<div><dt>Ticket: 52</dt><dd>A row where kind is Ticket, with 1 exact duplicate row (T-1033) counted once and 3 rows with another kind (Note: 3) left out. <span class="cols">Columns: kind, and every column for the duplicate check.</span></dd></div>
+<div><dt>Open tickets now: 22</dt><dd>Tickets where closed is blank. <span class="cols">Columns: kind, closed.</span></dd></div>
+<div><dt>Open tickets 7 days earlier: 19</dt><dd>Tickets opened on or before Nov 12, 2026 and not closed on or before that day. <span class="cols">Columns: kind, opened, closed.</span></dd></div>
+<div><dt>Open tickets by stage: Queue 5, Build 4, Review 9, Blocked 3</dt><dd>Open tickets grouped by stage, in process order. &quot;Reveiw&quot; on T-1047 is counted as open and reported as unmapped. It was not changed to another stage and is not in any bar. <span class="cols">Columns: kind, closed, stage.</span></dd></div>
+<div><dt>Bottleneck: Review, with 9 open tickets</dt><dd>The stage with the most open tickets. It is a count, not a judgment about the people in that stage. <span class="cols">Columns: kind, closed, stage.</span></dd></div>
+<div><dt>Who to nudge: 5 owners, 9 tickets</dt><dd>Every owner of an open ticket in Review, with each of those tickets and its age. Owners are ordered by their oldest ticket. <span class="cols">Columns: kind, closed, stage, owner, opened.</span></dd></div>
+<div><dt>Average age of open tickets: 13 days</dt><dd>Data-through date minus opened, averaged over open tickets. Exact value 13.4545, rounded once, at display. <span class="cols">Columns: kind, closed, opened.</span></dd></div>
+<div><dt>Ten oldest open tickets: T-1011 is the oldest, opened Sep 28, 2026</dt><dd>Open tickets sorted by opened, oldest first. Age is the data-through date minus opened, in days. The small bar next to each age starts at zero and is as long as the age. <span class="cols">Columns: kind, closed, opened.</span></dd></div>
+
+  </dl>
+</details>
+</main>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="robots" content="noindex" />
+    <meta
+      name="description"
+      content="A 2010-style webmail parody with a fictional inbox, for the GDG Tulsa workshop. An AI agent can drive it from its own browser through the Agent console on this page, or through a local MCP server. Not affiliated with Google."
+    />
+    <title>Oogle Mail - demo inbox</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to the mail</a>
+    <div class="gbar">
+      <nav class="gbar-left" aria-label="Demo apps">
+        <b>Mail</b>
+        <a href="https://oogle.web.app/">Brain Search</a>
+        <a href="https://github.com/techlahoma/techlahoma-google-group/tree/main/demos/mail">About this demo</a>
+      </nav>
+      <div class="gbar-right">
+        <b id="owner-email"></b> |
+        <span class="bridge" id="bridge" role="status" aria-live="polite">Starting…</span> |
+        <button type="button" class="link-button" id="reset-top">Reset demo inbox</button>
+      </div>
+    </div>
+    <p class="demo-banner">
+      <b>Demo inbox: written for the workshop.</b> Every email is fictional. Nothing here is ever really sent, and it never
+      touches real email.
+    </p>
+    <header class="head">
+      <div class="logo-wrap">
+        <button type="button" class="logo" id="logo" title="Click to rename" aria-label="Rename the logo"></button>
+        <input class="logo-edit" id="logo-edit" type="text" maxlength="24" aria-label="Logo text. Enter saves, Escape cancels." hidden />
+        <span class="logo-tag">demo</span>
+      </div>
+      <form class="search" id="search" role="search">
+        <label class="visually-hidden" for="q">Search mail</label>
+        <input id="q" class="box" type="text" autocomplete="off" spellcheck="false" />
+        <button type="submit" class="gbutton">Search Mail</button>
+        <button type="button" class="gbutton" id="search-clear">Show Inbox</button>
+      </form>
+    </header>
+    <div class="notice-row" aria-live="polite"><span class="notice" id="notice" hidden></span></div>
+    <div class="layout">
+      <aside class="side">
+        <button type="button" class="compose-link" id="compose">Compose Mail</button>
+        <nav aria-label="Labels"><ul class="labels" id="system-labels"></ul></nav>
+        <h2 class="side-title">Labels</h2>
+        <ul class="labels" id="custom-labels"></ul>
+        <h2 class="side-title">Agent activity</h2>
+        <ol class="activity" id="activity"><li class="quiet">Nothing yet. Paste Prompt A into your agent.</li></ol>
+        <button type="button" class="gbutton reset" id="reset-side">Reset demo inbox</button>
+      </aside>
+      <main class="main" id="main" tabindex="-1"></main>
+    </div>
+    <section class="agent-console" id="agent-console" aria-labelledby="agent-console-title">
+      <h2 id="agent-console-title">Agent console</h2>
+      <p>
+        For an AI agent working in this browser tab. Put one tool call in the box, press <b>Run tool</b>, and read the
+        result. It changes only this demo inbox. Nothing is ever sent.
+      </p>
+      <label for="agent-call">Tool call (JSON)</label>
+      <textarea id="agent-call" rows="5" spellcheck="false" autocomplete="off">{"tool": "list_emails", "args": {}}</textarea>
+      <div class="agent-row">
+        <button type="button" class="gbutton" id="agent-run">Run tool</button>
+        <span class="agent-status" id="agent-status" role="status" aria-live="polite">Ready.</span>
+      </div>
+      <label for="agent-result">Result</label>
+      <pre class="agent-result" id="agent-result" tabindex="0" aria-live="polite"></pre>
+      <details class="agent-tools">
+        <summary>Tools and their arguments</summary>
+        <ul>
+          <li><code>{"tool": "list_emails", "args": {}}</code> returns every Inbox email with its full body. Optional args: <code>label</code>, <code>query</code>, <code>unread</code>.</li>
+          <li><code>{"tool": "read_email", "args": {"id": "e10"}}</code></li>
+          <li><code>{"tool": "search_emails", "args": {"query": "invoice"}}</code></li>
+          <li><code>{"tool": "add_label", "args": {"label": "Needs me", "ids": ["e1", "e2"]}}</code> creates the label if it is new.</li>
+          <li><code>{"tool": "remove_label", "args": {"label": "Needs me", "ids": ["e1"]}}</code></li>
+          <li><code>{"tool": "archive", "args": {"ids": ["e3", "e4"]}}</code> removes them from the Inbox. They stay in All Mail.</li>
+          <li><code>{"tool": "mark_read", "args": {"ids": ["e1"], "read": true}}</code></li>
+          <li><code>{"tool": "create_draft", "args": {"to": "a@example.com", "subject": "Re: ...", "body": "...", "in_reply_to": "e10"}}</code></li>
+          <li><code>{"tool": "create_drafts", "args": {"drafts": [{"to": "...", "subject": "...", "body": "...", "in_reply_to": "e10"}]}}</code> saves several drafts in one call.</li>
+          <li><code>{"tool": "send_email", "args": {"draft_id": "d3"}}</code> only moves a draft to Sent Mail inside this page.</li>
+        </ul>
+        <p>An agent that can run JavaScript in the page can call <code>await OogleMail.run("list_emails", {})</code> instead.</p>
+      </details>
+    </section>
+    <footer class="footer">
+      <p>
+        Demo inbox: written for the workshop. All people and companies are fictional. Stored only in this browser
+        (localStorage).
+      </p>
+      <p>© 2010 - a throwback for GDG Tulsa × Women+ in Tech of Tulsa · Not affiliated with Google</p>
+    </footer>
+    <script src="store.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

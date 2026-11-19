@@ -1,0 +1,57 @@
+id,kind,title,opened,stage,stage_entered,owner,closed
+T-1001,Note,Standing reminder: lock the warehouse gate at 6,2026-09-10,Queue,2026-09-10,Priya Nair,
+T-1002,Ticket,Set up the fall pricing sheet,2026-09-14,Done,2026-09-21,Luis Ortega,2026-09-21
+T-1003,Ticket,Print new truck door magnets,2026-09-15,Done,2026-09-18,Marcus Bell,2026-09-18
+T-1004,Ticket,Sort the returned linens backlog,2026-09-17,Done,2026-09-24,Hannah Whitlow,2026-09-24
+T-1005,Ticket,Train two new hires on the tablet checkout,2026-09-18,Done,2026-09-29,Luis Ortega,2026-09-29
+T-1006,Ticket,Update the voicemail greeting,2026-09-21,Done,2026-09-25,Marcus Bell,2026-09-25
+T-1007,Ticket,Reconcile September deposits,2026-09-22,Done,2026-10-01,Hannah Whitlow,2026-10-01
+T-1008,Ticket,Replace the cracked dance floor panels,2026-09-23,Done,2026-09-28,Dana Okafor,2026-09-28
+T-1009,Ticket,Plan the fall festival load-out,2026-09-24,Done,2026-10-06,Marcus Bell,2026-10-06
+T-1010,Ticket,Renew the trailer registration,2026-09-28,Done,2026-10-05,Hannah Whitlow,2026-10-05
+T-1011,Ticket,Replace the label printer in the warehouse,2026-09-28,Blocked,2026-10-12,Dana Okafor,
+T-1012,Ticket,Rewrite the quote follow-up email,2026-09-29,Done,2026-10-08,Priya Nair,2026-10-08
+T-1013,Ticket,Order more garment bags,2026-09-30,Done,2026-10-02,Hannah Whitlow,2026-10-02
+T-1014,Ticket,Audit chair counts after the fair,2026-10-01,Done,2026-10-09,Dana Okafor,2026-10-09
+T-1015,Ticket,Add a rain plan line to the contract,2026-10-05,Done,2026-10-12,Priya Nair,2026-10-12
+T-1016,Ticket,Compare two card readers,2026-10-06,Done,2026-10-14,Luis Ortega,2026-10-14
+T-1017,Ticket,Label the shelves in bay 3,2026-10-07,Done,2026-10-13,Dana Okafor,2026-10-13
+T-1018,Ticket,Build the corporate picnic package,2026-10-08,Done,2026-10-20,Priya Nair,2026-10-20
+T-1019,Ticket,Update the staff phone list,2026-10-12,Done,2026-10-19,Luis Ortega,2026-10-19
+T-1020,Ticket,Fix the delivery window picker on the order form,2026-10-13,Done,2026-10-21,Marcus Bell,2026-10-21
+T-1021,Ticket,Book the carpet cleaner for the showroom,2026-10-14,Done,2026-10-16,Priya Nair,2026-10-16
+T-1022,Ticket,Write the generator safety one-pager,2026-10-15,Done,2026-10-22,Luis Ortega,2026-10-22
+T-1023,Ticket,Refresh the showroom price tags,2026-10-19,Done,2026-10-26,Marcus Bell,2026-10-26
+T-1024,Ticket,Rewrite the damage waiver wording on quotes,2026-10-19,Review,2026-10-26,Hannah Whitlow,
+T-1025,Ticket,Close out the October refunds,2026-10-20,Done,2026-10-28,Luis Ortega,2026-10-28
+T-1026,Note,Meeting notes: fall planning with the crew leads,2026-10-20,Review,2026-10-20,Marcus Bell,
+T-1027,Ticket,Inspect the heater hoses,2026-10-21,Done,2026-10-27,Hannah Whitlow,2026-10-27
+T-1028,Ticket,Add reviews to the home page,2026-10-22,Done,2026-10-30,Dana Okafor,2026-10-30
+T-1029,Ticket,New delivery fee table for out-of-county orders,2026-10-23,Review,2026-11-02,Marcus Bell,
+T-1030,Ticket,Move old contracts to the archive folder,2026-10-26,Done,2026-11-03,Hannah Whitlow,2026-11-03
+T-1031,Ticket,Set the Thanksgiving week delivery routes,2026-10-27,Done,2026-11-05,Dana Okafor,2026-11-05
+T-1032,Ticket,Renew the liquor liability insurance certificate,2026-10-28,Blocked,2026-11-05,Priya Nair,
+T-1033,Ticket,Repair the torn sidewall on tent 14,2026-10-29,Done,2026-11-16,Hannah Whitlow,2026-11-16
+T-1034,Ticket,Tent inventory count does not match the warehouse sheet,2026-10-30,Review,2026-11-06,Dana Okafor,
+T-1035,Ticket,Set up the shared calendar for delivery crews,2026-11-02,Build,2026-11-09,Priya Nair,
+T-1036,Ticket,Update the vendor onboarding checklist,2026-11-03,Review,2026-11-09,Luis Ortega,
+T-1037,Ticket,Send the November invoice reminders,2026-11-04,Done,2026-11-19,Dana Okafor,2026-11-19
+T-1038,Ticket,Draft the holiday hours notice for customers,2026-11-04,Review,2026-11-10,Priya Nair,
+T-1039,Ticket,Price check on folding chairs from two suppliers,2026-11-05,Queue,2026-11-05,Luis Ortega,
+T-1040,Ticket,Fix the broken quote PDF template,2026-11-06,Review,2026-11-13,Marcus Bell,
+T-1041,Ticket,Get the venue map from the fairgrounds contact,2026-11-09,Blocked,2026-11-13,Priya Nair,
+T-1033,Ticket,Repair the torn sidewall on tent 14,2026-10-29,Done,2026-11-16,Hannah Whitlow,2026-11-16
+T-1042,Ticket,Post the job listing for seasonal drivers,2026-11-10,Done,2026-11-13,Luis Ortega,2026-11-13
+T-1043,Ticket,Add linen colors to the online catalog,2026-11-10,Review,2026-11-16,Marcus Bell,
+T-1044,Ticket,Collect photos of the new string lights,2026-11-10,Queue,2026-11-10,Hannah Whitlow,
+T-1045,Ticket,Build the weekly truck loading checklist,2026-11-11,Build,2026-11-13,Luis Ortega,
+T-1046,Ticket,Clean up duplicate customers in the contact list,2026-11-11,Build,2026-11-16,Marcus Bell,
+T-1047,Ticket,Check the December staffing schedule,2026-11-11,Reveiw,2026-11-17,Hannah Whitlow,
+T-1048,Ticket,Fix the typo on the contact page,2026-11-13,Done,2026-11-17,Dana Okafor,2026-11-17
+T-1049,Ticket,Proofread the spring wedding package sheet,2026-11-13,Review,2026-11-17,Marcus Bell,
+T-1050,Ticket,Approve the revised late-return policy,2026-11-16,Review,2026-11-18,Hannah Whitlow,
+T-1051,Ticket,Order replacement stakes for the 20x40 tents,2026-11-16,Queue,2026-11-16,Dana Okafor,
+T-1052,Note,Note to self: ask about the truck lease,2026-11-16,Queue,2026-11-16,Priya Nair,
+T-1053,Ticket,Make a sign-out sheet for the dolly carts,2026-11-17,Build,2026-11-18,Hannah Whitlow,
+T-1054,Ticket,Schedule the forklift safety refresher,2026-11-17,Queue,2026-11-17,Dana Okafor,
+T-1055,Ticket,Write the thank-you note template for repeat customers,2026-11-18,Queue,2026-11-18,Priya Nair,
