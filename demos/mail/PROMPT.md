@@ -21,7 +21,7 @@ Set up the "Oogle Mail" demo inbox as a local MCP server for this app. Do the wo
 4. Add this entry inside "mcpServers", using the two absolute paths from steps 1 and 2:
    "mail": { "command": "<absolute path to bun>", "args": ["<absolute path to demos/mail/mcp.ts>"] }
 5. Show me the finished file. Do not run the server yourself and do not change anything else.
-6. Tell me to do one thing: open the MCP Servers list (Antigravity app: Customizations > Installed > MCP Servers; Antigravity IDE: the "…" menu in the agent panel > MCP Servers > Manage MCP Servers) and restart or refresh it so "mail" shows 10 tools. Tell me the inbox will open in my browser by itself the first time you use a mail tool, and that I can also open http://127.0.0.1:4810 myself.
+6. Tell me to do one thing: open the MCP Servers list (Antigravity app: Customizations > Installed > MCP Servers; Antigravity IDE: the "…" menu in the agent panel > MCP Servers > Manage MCP Servers) and restart or refresh it so "mail" shows 10 tools. Tell me this: if the hosted inbox (https://wit-demos.web.app/mail/web/) is already open in my browser, I can click "Connect local agent" at the top of that tab and you will use that tab. Otherwise the inbox opens in my browser by itself the first time you use a mail tool.
 ```
 
 Then refresh the MCP server list as it asks. The inbox opens in your browser by itself the first time the agent uses a mail tool, and the page's top bar says **Agent bridge connected**. Set `MAIL_NO_OPEN=1` to stop the server opening a browser.

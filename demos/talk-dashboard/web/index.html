@@ -52,6 +52,7 @@ textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border:
   <h1>Talk dashboard</h1>
   <p class="sub">Actual Productivity with AI · Google Developer Group Tulsa × Women+ in Technology of Tulsa · November 19, 2026</p>
   <p class="sub" id="bridge" role="status" aria-live="polite" hidden></p>
+  <p class="sub"><button type="button" class="link" id="connect-agent" hidden>Connect local agent (uses the talk MCP server on this computer)</button></p>
   <p class="demo-note"><b>Every number here is counted by code from the transcript below.</b> Click any number to see the lines it came from. The transcript stays in this browser.</p>
 
   <div class="tiles" id="tiles" aria-live="polite"></div>
@@ -204,13 +205,9 @@ textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border:
     });
   }
   function setBridge(msg) { var el = $('bridge'); el.hidden = !msg; el.textContent = msg || ''; }
-  function connect() {
-    var local = location.protocol === 'http:' && (location.hostname === '127.0.0.1' || location.hostname === 'localhost');
-    if (!local) return;
-    var ws, opened = false;
-    try { ws = new WebSocket('ws://' + location.host + '/__talk/ws'); } catch (e) { setTimeout(connect, 1000); return; }
-    ws.onopen = function () { opened = true; setBridge('● Agent bridge connected: your agent can update this page.'); };
-    ws.onmessage = function (event) {
+  var LOCAL_AGENT_KEY = 'talk-dashboard-local-agent', LOCAL_PORTS = [4820, 4821, 4822];
+  function onAgentMessage(ws) {
+    return function (event) {
       var msg; try { msg = JSON.parse(event.data); } catch (e) { return; }
       if (!msg.id || !msg.tool) return;
       runTool(msg.tool, msg.args).then(
@@ -218,6 +215,34 @@ textarea { display: block; width: 100%; min-height: 150px; padding: 8px; border:
         function (error) { ws.send(JSON.stringify({ id: msg.id, ok: false, error: String((error && error.message) || error) })); }
       );
     };
+  }
+  function wantsLocalAgent() {
+    if (/[?&]agent=local\b/.test(location.search)) return true;
+    try { return localStorage.getItem(LOCAL_AGENT_KEY) === '1'; } catch (e) { return false; }
+  }
+  /** On the hosted page: look for the local MCP server on this computer, so an open tab can be reused. */
+  function connectFromHosted(n) {
+    var opened = false, ws;
+    try { ws = new WebSocket('ws://127.0.0.1:' + LOCAL_PORTS[n % LOCAL_PORTS.length] + '/__talk/ws'); } catch (e) { setBridge(''); return; }
+    ws.onopen = function () { opened = true; setBridge('● Agent bridge connected (local agent): your agent can update this page.'); };
+    ws.onmessage = onAgentMessage(ws);
+    ws.onclose = function () { setBridge('○ Looking for your local agent…'); setTimeout(function () { connectFromHosted(opened ? n : n + 1); }, opened ? 1000 : 700); };
+  }
+  function connect() {
+    var local = location.protocol === 'http:' && (location.hostname === '127.0.0.1' || location.hostname === 'localhost');
+    if (!local) {
+      var link = $('connect-agent');
+      if (wantsLocalAgent()) connectFromHosted(0);
+      else if (link) {
+        link.hidden = false;
+        link.addEventListener('click', function () { try { localStorage.setItem(LOCAL_AGENT_KEY, '1'); } catch (e) {} link.hidden = true; connectFromHosted(0); });
+      }
+      return;
+    }
+    var ws, opened = false;
+    try { ws = new WebSocket('ws://' + location.host + '/__talk/ws'); } catch (e) { setTimeout(connect, 1000); return; }
+    ws.onopen = function () { opened = true; setBridge('● Agent bridge connected: your agent can update this page.'); };
+    ws.onmessage = onAgentMessage(ws);
     ws.onclose = function () { setBridge(opened ? '○ Waiting for the local server…' : ''); setTimeout(connect, 1000); };
   }
 

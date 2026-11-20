@@ -20,7 +20,7 @@ Set up the "Talk dashboard" demo as a local MCP server for this app. Do the work
 4. Add this entry inside "mcpServers", using the two absolute paths from steps 1 and 2:
    "talk": { "command": "<absolute path to bun>", "args": ["<absolute path to demos/talk-dashboard/mcp.ts>"] }
 5. Show me the finished file. Do not run the server yourself and do not change anything else.
-6. Tell me to do one thing: open the MCP Servers list (Antigravity app: Customizations > Installed > MCP Servers; Antigravity IDE: the "…" menu in the agent panel > MCP Servers > Manage MCP Servers) and restart or refresh it so "talk" shows 7 tools. Tell me the dashboard will open in my browser by itself the first time you use a talk tool, and that I can also open http://127.0.0.1:4820 myself.
+6. Tell me to do one thing: open the MCP Servers list (Antigravity app: Customizations > Installed > MCP Servers; Antigravity IDE: the "…" menu in the agent panel > MCP Servers > Manage MCP Servers) and restart or refresh it so "talk" shows 7 tools. Tell me this: if the hosted dashboard (https://wit-demos.web.app/talk-dashboard/web/) is already open in my browser, I can click "Connect local agent" on that tab and you will use that tab. Otherwise the dashboard opens in my browser by itself the first time you use a talk tool.
 ```
 
 Then refresh the MCP server list as it asks. The dashboard opens in your browser by itself the first time the agent uses a talk tool, and the page says **Agent bridge connected**. Set `TALK_NO_OPEN=1` to stop the server opening a browser.

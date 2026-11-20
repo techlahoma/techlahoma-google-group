@@ -29,6 +29,7 @@ const SERVE_ONLY = argv.includes('--serve');
 const SERVER_NAME = 'oogle-mail-demo';
 const CALL_TIMEOUT_MS = 20_000;
 const PAGE_WAIT_MS = 2_500;
+const EXISTING_TAB_WAIT_MS = 3_500; // an open tab retries about every second
 const PAGE_OPEN_WAIT_MS = 15_000; // after this server opens the browser itself
 
 const log = (...parts: unknown[]) => console.error('[mail]', ...parts);
@@ -155,6 +156,18 @@ function isOwnOrigin(req: Request): boolean {
   }
 }
 
+/** The hosted copy of this page (and its preview channels) may also connect, so an open tab can be reused. */
+function isHostedOrigin(req: Request): boolean {
+  const origin = req.headers.get('origin');
+  if (!origin) return false;
+  try {
+    const u = new URL(origin);
+    return u.protocol === 'https:' && /^wit-demos(--[a-z0-9-]+)?\.web\.app$/.test(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function callPage(tool: string, args: unknown, silent = false): Promise<unknown> {
   const page = pages[pages.length - 1];
   if (!page) return Promise.reject(new Error(openFirst()));
@@ -195,6 +208,10 @@ function openBrowser(): boolean {
 
 async function waitForPage(): Promise<void> {
   if (pages.length > 0) return;
+  // Give a tab that is already open (local or hosted) a moment to connect before opening a new one.
+  const grace = Date.now() + EXISTING_TAB_WAIT_MS;
+  while (pages.length === 0 && Date.now() < grace) await Bun.sleep(100);
+  if (pages.length > 0) return;
   const opened = openBrowser();
   const until = Date.now() + (opened ? PAGE_OPEN_WAIT_MS : PAGE_WAIT_MS);
   while (pages.length === 0 && Date.now() < until) await Bun.sleep(100);
@@ -210,7 +227,7 @@ function listen(tryPort: number): boolean {
         const { pathname } = new URL(req.url);
 
         if (pathname === '/__mail/ws') {
-          if (!isOwnOrigin(req)) return new Response('Forbidden', { status: 403 });
+          if (!isOwnOrigin(req) && !isHostedOrigin(req)) return new Response('Forbidden', { status: 403 });
           return server.upgrade(req) ? undefined : new Response('Expected a WebSocket', { status: 400 });
         }
         if (pathname === '/__mail/ping') {

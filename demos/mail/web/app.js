@@ -660,26 +660,11 @@
   $('agent-run').addEventListener('click', runConsole);
 
   var everConnected = false;
+  var LOCAL_AGENT_KEY = 'oogle-mail-local-agent';
+  var LOCAL_PORTS = [4810, 4811, 4812];
 
-  function connect() {
-    var local = location.protocol === 'http:' && (location.hostname === '127.0.0.1' || location.hostname === 'localhost');
-    if (!local) {
-      setBridge('browser', BROWSER_MODE);
-      return;
-    }
-    var ws;
-    try {
-      ws = new WebSocket('ws://' + location.host + '/__mail/ws');
-    } catch (error) {
-      setBridge('wait', 'Waiting for the local server…');
-      setTimeout(connect, 1000);
-      return;
-    }
-    ws.onopen = function () {
-      everConnected = true;
-      setBridge('on', 'Agent bridge connected');
-    };
-    ws.onmessage = function (event) {
+  function onAgentMessage(ws) {
+    return function (event) {
       var msg;
       try {
         msg = JSON.parse(event.data);
@@ -696,6 +681,74 @@
         },
       );
     };
+  }
+
+  function wantsLocalAgent() {
+    if (/[?&]agent=local\b/.test(location.search)) return true;
+    try {
+      return localStorage.getItem(LOCAL_AGENT_KEY) === '1';
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /** On the hosted page: look for the local MCP server on this computer, so an open tab can be reused. */
+  function connectFromHosted(n) {
+    var port = LOCAL_PORTS[n % LOCAL_PORTS.length];
+    var opened = false;
+    var ws;
+    try {
+      ws = new WebSocket('ws://127.0.0.1:' + port + '/__mail/ws');
+    } catch (error) {
+      setBridge('browser', BROWSER_MODE);
+      return;
+    }
+    ws.onopen = function () {
+      opened = true;
+      everConnected = true;
+      setBridge('on', 'Agent bridge connected (local agent)');
+    };
+    ws.onmessage = onAgentMessage(ws);
+    ws.onclose = function () {
+      setBridge('wait', 'Looking for your local agent…');
+      setTimeout(function () {
+        connectFromHosted(opened ? n : n + 1);
+      }, opened ? 1000 : 700);
+    };
+  }
+
+  function connect() {
+    var local = location.protocol === 'http:' && (location.hostname === '127.0.0.1' || location.hostname === 'localhost');
+    if (!local) {
+      setBridge('browser', BROWSER_MODE);
+      var link = $('connect-agent');
+      if (wantsLocalAgent()) {
+        connectFromHosted(0);
+      } else if (link) {
+        link.hidden = false;
+        link.addEventListener('click', function () {
+          try {
+            localStorage.setItem(LOCAL_AGENT_KEY, '1');
+          } catch (error) {}
+          link.hidden = true;
+          connectFromHosted(0);
+        });
+      }
+      return;
+    }
+    var ws;
+    try {
+      ws = new WebSocket('ws://' + location.host + '/__mail/ws');
+    } catch (error) {
+      setBridge('wait', 'Waiting for the local server…');
+      setTimeout(connect, 1000);
+      return;
+    }
+    ws.onopen = function () {
+      everConnected = true;
+      setBridge('on', 'Agent bridge connected');
+    };
+    ws.onmessage = onAgentMessage(ws);
     ws.onclose = function () {
       if (everConnected) setBridge('wait', 'Waiting for the local server…');
       else setBridge('browser', BROWSER_MODE);
