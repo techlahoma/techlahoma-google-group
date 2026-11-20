@@ -25,6 +25,8 @@ Links only. Every note in this brain, grouped by folder. See [AGENTS.md](AGENTS.
 - [Tulsa Innovation Labs](orgs/tulsa-innovation-labs.md)
 - [Tulsa Remote](orgs/tulsa-remote.md)
 - [Tulsa Web Devs](orgs/tulsa-web-devs.md)
+- [OklahomAI Developers Tulsa](orgs/oklahomai-developers-tulsa.md)
+- [Tulsa WordPress Meetup](orgs/tulsa-wordpress-meetup.md)
 
 ## Events
 
@@ -34,6 +36,9 @@ Links only. Every note in this brain, grouped by folder. See [AGENTS.md](AGENTS.
 - [Intro to GDG Tulsa with Techlahoma (Aug 6, 2026)](events/intro-to-gdg-tulsa-with-techlahoma-2026-08-06.md)
 - [ThunderPlains](events/thunderplains.md)
 - [Tulsa Tech Week](events/tulsa-tech-week.md)
+- [GDG Tulsa: Local Models & Fine-Tuning (Sep 22, 2026)](events/gdg-tulsa-local-models-and-fine-tuning-2026-09-22.md)
+- [Expert AMA: Data Before AI (Aug 25, 2026)](events/expert-ama-data-before-ai-2026-08-25.md)
+- [DevFest Tulsa](events/devfest-tulsa.md)
 
 ## Meetings
 
@@ -61,6 +66,10 @@ Links only. Every note in this brain, grouped by folder. See [AGENTS.md](AGENTS.
 - [Embeddings and semantic search](notes/embeddings-and-semantic-search.md)
 - [FetchMoji (emoji-search)](notes/fetchmoji-emoji-search.md)
 - [Hybrid search](notes/hybrid-search.md)
+- [GDG Tulsa meetups and crossovers](notes/gdg-tulsa-meetups-and-crossovers.md)
+- [GDG Tulsa workshop kits and demos](notes/gdg-tulsa-workshop-kits-and-demos.md)
+- [How to join GDG Tulsa](notes/how-to-join-gdg-tulsa.md)
+- [The checkable-dashboard skill](notes/checkable-dashboard-skill.md)
 
 ## Tulsa Ecosystem Map
 

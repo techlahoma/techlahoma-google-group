@@ -3,7 +3,9 @@ title: "Google Dev × Women+ in Tech: Actual Productivity with AI"
 tags: [event, tulsa, gdg, women-in-tech, ai, techlahoma]
 source:
   - https://luma.com/b7eptsqo
-updated: 2026-11-18
+  - https://sam.lc/wit
+  - https://wit-demos.web.app/
+updated: 2026-11-20
 ---
 
 # Google Dev × Women+ in Tech: Actual Productivity with AI
@@ -18,6 +20,13 @@ Thursday, November 19, 2026, 6–8 PM CST, at [GitWit](../orgs/gitwit.md), 301 E
 
 No engineering background was needed, and attending required no install or purchase. Registration was free with host approval.
 
+## Materials
+
+- [Workshop page](https://sam.lc/wit) with every demo, prompt, and link.
+- [The demos](https://wit-demos.web.app/): managing email, recapping meetings, agent memories, a dashboard you can check, and a personal search page.
+- [The checkable-dashboard skill](../notes/checkable-dashboard-skill.md).
+- All materials by meetup: [workshop kits and demos](../notes/gdg-tulsa-workshop-kits-and-demos.md). Announced that night: [DevFest Tulsa](devfest-tulsa.md).
+
 ## Hosts
 
 Listed on the event page: Techlahoma Foundation, [Sam Carlton](../people/sam-carlton.md), [Zain Khan](../people/zain-khan.md), [Tran Trinh](../people/tran-trinh.md), [Jess Trippiedi](../people/jess-trippiedi.md), and [Valerie Feral](../people/valerie-feral.md).
@@ -30,3 +39,5 @@ Listed on the event page: Techlahoma Foundation, [Sam Carlton](../people/sam-car
 ## Sources
 
 - [Event page on Luma](https://luma.com/b7eptsqo)
+- [Workshop page](https://sam.lc/wit)
+- [Demos from the night](https://wit-demos.web.app/)
